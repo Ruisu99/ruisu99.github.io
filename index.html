@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hold’em Helper – Pro</title>
+  <title>Hold’em Helper – Pro (UX)</title>
   <style>
     :root{
       --bg1:#0b1220; --bg2:#07252a;
@@ -27,6 +27,7 @@
       padding:14px 14px 110px;
     }
     .wrap{ max-width:980px; margin:0 auto; }
+
     header{
       display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
       margin-bottom:12px;
@@ -34,7 +35,11 @@
     .title{
       font-size:20px; margin:0; letter-spacing:.2px; font-weight:950;
       background: linear-gradient(135deg, rgba(122,167,255,.95), rgba(83,240,181,.85));
-      -webkit-background-clip: text; background-clip:text; color: transparent;
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+    .hdrRight{
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+      justify-content:flex-end;
     }
     .pill{
       display:inline-flex; align-items:center; gap:8px;
@@ -44,6 +49,22 @@
       font-weight:900; font-size:12px;
       user-select:none;
     }
+    .iconBtn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-weight:950; font-size:12px;
+      cursor:pointer;
+      transition: background .2s ease, transform .06s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .iconBtn:hover{ background: rgba(255,255,255,.08); }
+    .iconBtn:active{ transform: translateY(1px); }
+
     .grid{ display:grid; grid-template-columns:1fr; gap:12px; }
     .panel{
       background: var(--card);
@@ -60,6 +81,16 @@
     .ttl{ font-weight:950; letter-spacing:.2px; font-size:13.5px; }
     .muted{ color:var(--muted); font-size:12px; }
     .bd{ padding:12px 14px 14px; }
+
+    .stepBadge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-weight:950; font-size:12px;
+    }
+    .stepBadge b{ color:var(--text); }
 
     .seg{
       display:flex; gap:8px; flex-wrap:wrap;
@@ -264,6 +295,7 @@
       background: rgba(7,14,26,.72);
       backdrop-filter: blur(12px);
       border-top:1px solid rgba(255,255,255,.10);
+      z-index: 20;
     }
     .bottomWrap{ max-width:980px; margin:0 auto; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
     .bar{
@@ -288,6 +320,150 @@
       transform-origin: center center;
       filter: drop-shadow(0 22px 40px rgba(0,0,0,.45));
     }
+
+    /* UX Add-ons */
+    .chips{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    .chip{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-weight:950;
+      font-size:12px;
+    }
+    .chip.active{
+      background: rgba(122,167,255,.14);
+      color: var(--text);
+      border-color: rgba(122,167,255,.35);
+    }
+    .bigCTA{
+      width:100%;
+      padding:14px 14px;
+      font-size:15px;
+      border-radius: 16px;
+    }
+    .ctaHint{
+      margin-top:10px;
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.35;
+    }
+
+    /* ===== Hand-Rankings Modal (NEW) ===== */
+    .modalOverlay{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      z-index: 10050;
+    }
+    .modal{
+      width:min(820px, 100%);
+      max-height: min(76vh, 720px);
+      overflow:auto;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(15,27,46,.92);
+      box-shadow: 0 28px 80px rgba(0,0,0,.55);
+    }
+    .modalHd{
+      position:sticky;
+      top:0;
+      background: rgba(15,27,46,.96);
+      border-bottom:1px solid rgba(255,255,255,.10);
+      padding:12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      z-index:1;
+    }
+    .modalTitle{
+      font-weight:950;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .closeBtn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border-radius: 12px;
+      padding:8px 10px;
+      font-weight:950;
+      cursor:pointer;
+    }
+    .closeBtn:hover{ background: rgba(255,255,255,.09); }
+
+    .modalBody{ padding:12px 14px 14px; }
+    .handsTable{
+      width:100%;
+      border-collapse: separate;
+      border-spacing:0 10px;
+    }
+    .handsRow{
+      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      overflow:hidden;
+    }
+    .handsRow td{
+      padding:10px 12px;
+      vertical-align:middle;
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+    .handsRow td:first-child{
+      width: 42%;
+      font-weight:950;
+      color: var(--text);
+      border-right:1px solid rgba(255,255,255,.08);
+    }
+    @media (max-width: 620px){
+      .handsRow td:first-child{ width: 52%; }
+    }
+    .handNameSub{
+      display:block;
+      color: var(--muted);
+      font-weight:900;
+      font-size:12px;
+      margin-top:3px;
+    }
+
+    /* Mini cards for the static examples */
+    .miniCards{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      justify-content:flex-start;
+      align-items:center;
+    }
+    .mCard{
+      width:34px;
+      height:44px;
+      border-radius: 10px;
+      border:1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:950;
+      font-size:13px;
+      letter-spacing:.2px;
+    }
+    .mRed{ color:#ff6b8a; }
+    .mWhite{ color:#e8eefc; }
+
+    .modalNote{
+      margin-top:10px;
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.35;
+    }
   </style>
 </head>
 
@@ -295,14 +471,20 @@
   <div class="wrap">
     <header>
       <h1 class="title">Hold’em Helper</h1>
-      <div class="pill">Deck: <span id="deckLeft">52</span></div>
+      <div class="hdrRight">
+        <button id="handsBtn" class="iconBtn" type="button" aria-haspopup="dialog" aria-controls="handsModal">
+          Kombinationen
+        </button>
+        <div class="pill">Deck: <span id="deckLeft">52</span></div>
+      </div>
     </header>
 
     <div class="grid">
 
-      <section class="panel">
+      <!-- 1) Setup -->
+      <section class="panel" id="panelSetup">
         <div class="hd">
-          <div class="ttl">Setup</div>
+          <div class="ttl"><span class="stepBadge"><b>1</b> Setup</span></div>
           <div class="muted" id="targetHint">Ziel: Hole 1</div>
         </div>
         <div class="bd">
@@ -317,6 +499,8 @@
             <label for="opp" style="margin-top:0;">Gegner (Anzahl)</label>
             <input id="opp" class="range" type="range" min="1" max="8" step="1" value="3" />
             <div class="muted" style="margin-top:6px;">Aktuell: <b id="oppVal">3</b></div>
+
+            
           </div>
 
           <div style="margin-top:12px;">
@@ -332,16 +516,16 @@
           <div class="btnRow">
             <button id="undoBtn" class="ghost" type="button">Undo</button>
             <button id="resetBtn" class="ghost" type="button">Reset</button>
-            <button id="calcBtn" class="primary" type="button">Berechnen</button>
           </div>
 
           <div id="err" class="err"></div>
         </div>
       </section>
 
-      <section class="panel">
+      <!-- 2) Card Picker -->
+      <section class="panel" id="panelPicker">
         <div class="hd">
-          <div class="ttl">Karte wählen</div>
+          <div class="ttl"><span class="stepBadge"><b>2</b> Karte wählen</span></div>
           <div class="muted">Rang + Symbol → Übernehmen</div>
         </div>
         <div class="bd">
@@ -371,37 +555,15 @@
         </div>
       </section>
 
-      <section class="panel">
+      <!-- 3) Calculate -->
+      <section class="panel" id="panelCalc">
         <div class="hd">
-          <div class="ttl">Ergebnis</div>
+          <div class="ttl"><span class="stepBadge"><b>3</b> Berechnen</span></div>
           <div class="muted" id="modeHint">Auto: Monte-Carlo / Exakt (Heads-Up ab Flop)</div>
         </div>
         <div class="bd">
-          <div class="resultGrid" id="result" style="display:none;">
-            <div class="kpi">
-              <div class="k">Equity</div>
-              <div class="v" id="equity">—</div>
-              <div class="s" id="equityMeta">Score: —/100</div>
-              <div class="s" id="wtl">W/T/L: —</div>
-              <div class="s" id="ci">—</div>
-            </div>
-            <div class="kpi">
-              <div class="k">Empfehlung</div>
-              <div class="v" id="advice">—</div>
-              <div class="s" id="adviceDetail">—</div>
-            </div>
-            <div class="kpi">
-              <div class="k">Details</div>
-              <div class="v" id="details">—</div>
-              <div class="s" id="details2">—</div>
-            </div>
-            <div class="kpi">
-              <div class="k">Hinweis</div>
-              <div class="s">
-                Modell: Gegnerhände zufällig (keine Ranges/Reads). Für „realistische“ Entscheidungen ist Range-Modellierung der größte Hebel.
-              </div>
-            </div>
-          </div>
+          <button id="calcBtn" class="primary bigCTA" type="button" disabled>Berechnen</button>
+          <div class="ctaHint" id="ctaHint">Setze zuerst beide Hole Cards (und ggf. Board-Karten), dann wird „Berechnen“ aktiv.</div>
 
           <details>
             <summary>Erweitert</summary>
@@ -434,6 +596,41 @@
         </div>
       </section>
 
+      <!-- Results -->
+      <section class="panel" id="resultsPanel">
+        <div class="hd">
+          <div class="ttl">Ergebnis</div>
+          <div class="muted">Equity / W-T-L / Empfehlung</div>
+        </div>
+        <div class="bd">
+          <div class="resultGrid" id="result" style="display:none;">
+            <div class="kpi">
+              <div class="k">Equity</div>
+              <div class="v" id="equity">—</div>
+              <div class="s" id="equityMeta">Score: —/100</div>
+              <div class="s" id="wtl">W/T/L: —</div>
+              <div class="s" id="ci">—</div>
+            </div>
+            <div class="kpi">
+              <div class="k">Empfehlung</div>
+              <div class="v" id="advice">—</div>
+              <div class="s" id="adviceDetail">—</div>
+            </div>
+            <div class="kpi">
+              <div class="k">Details</div>
+              <div class="v" id="details">—</div>
+              <div class="s" id="details2">—</div>
+            </div>
+            <div class="kpi">
+              <div class="k">Hinweis</div>
+              <div class="s">
+                Modell: Gegnerhände zufällig (keine Ranges/Reads). Für „realistische“ Entscheidungen ist Range-Modellierung der größte Hebel.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
   </div>
 
@@ -441,6 +638,145 @@
     <div class="bottomWrap">
       <div class="statusTxt" id="statusText">Bereit.</div>
       <div class="bar" aria-label="Fortschritt"><div id="barFill"></div></div>
+    </div>
+  </div>
+
+  <!-- ===== Hand-Rankings Modal (NEW) ===== -->
+  <div id="handsModal" class="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="handsTitle">
+    <div class="modal" tabindex="-1">
+      <div class="modalHd">
+        <div class="modalTitle" id="handsTitle">Poker-Kombinationen</div>
+        <button id="handsClose" class="closeBtn" type="button" aria-label="Schließen">Schließen</button>
+      </div>
+      <div class="modalBody">
+        <table class="handsTable" aria-label="Poker Hand Rankings">
+          <tbody>
+            <tr class="handsRow">
+              <td>
+                Royal Flush
+                <span class="handNameSub">A-K-Q-J-10 gleiche Farbe</span>
+              </td>
+              <td>
+                <div class="miniCards">
+                  <span class="mCard mRed">10♦</span><span class="mCard mRed">J♦</span><span class="mCard mRed">Q♦</span><span class="mCard mRed">K♦</span><span class="mCard mRed">A♦</span>
+                </div>
+              </td>
+            </tr>
+
+            <tr class="handsRow">
+              <td>
+                Straight Flush
+                <span class="handNameSub">Straße + Flush</span>
+              </td>
+              <td>
+                <div class="miniCards">
+                  <span class="mCard mWhite">7♣</span><span class="mCard mWhite">8♣</span><span class="mCard mWhite">9♣</span><span class="mCard mWhite">10♣</span><span class="mCard mWhite">J♣</span>
+                </div>
+              </td>
+            </tr>
+
+            <tr class="handsRow">
+              <td>
+                Vierling – Quads
+                <span class="handNameSub">4 gleiche Karten</span>
+              </td>
+              <td>
+                <div class="miniCards">
+                  <span class="mCard mWhite">4♠</span><span class="mCard mRed">4♥</span><span class="mCard mWhite">4♣</span><span class="mCard mRed">4♦</span><span class="mCard mWhite">K♠</span>
+                </div>
+              </td>
+            </tr>
+
+            <tr class="handsRow">
+              <td>
+                Full House
+                <span class="handNameSub">Drilling + Paar</span>
+              </td>
+              <td>
+                <div class="miniCards">
+                  <span class="mCard mWhite">10♣</span><span class="mCard mRed">10♦</span><span class="mCard mWhite">10♠</span><span class="mCard mWhite">2♣</span><span class="mCard mRed">2♥</span>
+                </div>
+              </td>
+            </tr>
+
+            <tr class="handsRow">
+              <td>
+                Flush
+                <span class="handNameSub">5 gleiche Farbe</span>
+              </td>
+              <td>
+                <div class="miniCards">
+                  <span class="mCard mWhite">K♠</span><span class="mCard mWhite">9♠</span><span class="mCard mWhite">J♠</span><span class="mCard mWhite">5♠</span><span class="mCard mWhite">A♠</span>
+                </div>
+              </td>
+            </tr>
+
+            <tr class="handsRow">
+              <td>
+                Straße – Straight
+                <span class="handNameSub">5 in Folge</span>
+              </td>
+              <td>
+                <div class="miniCards">
+                  <span class="mCard mWhite">7♣</span><span class="mCard mRed">8♦</span><span class="mCard mWhite">9♠</span><span class="mCard mRed">10♥</span><span class="mCard mWhite">J♣</span>
+                </div>
+              </td>
+            </tr>
+
+            <tr class="handsRow">
+              <td>
+                Drilling – Three of a Kind
+                <span class="handNameSub">3 gleiche Karten</span>
+              </td>
+              <td>
+                <div class="miniCards">
+                  <span class="mCard mRed">2♦</span><span class="mCard mWhite">2♣</span><span class="mCard mWhite">2♠</span><span class="mCard mRed">6♦</span><span class="mCard mRed">A♥</span>
+                </div>
+              </td>
+            </tr>
+
+            <tr class="handsRow">
+              <td>
+                Zwei Paare – Two Pair
+                <span class="handNameSub">2 Paare</span>
+              </td>
+              <td>
+                <div class="miniCards">
+                  <span class="mCard mWhite">8♣</span><span class="mCard mRed">8♦</span><span class="mCard mRed">7♥</span><span class="mCard mWhite">7♣</span><span class="mCard mWhite">Q♠</span>
+                </div>
+              </td>
+            </tr>
+
+            <tr class="handsRow">
+              <td>
+                Ein Paar – One Pair
+                <span class="handNameSub">1 Paar</span>
+              </td>
+              <td>
+                <div class="miniCards">
+                  <span class="mCard mWhite">5♠</span><span class="mCard mRed">5♦</span><span class="mCard mWhite">J♣</span><span class="mCard mRed">10♥</span><span class="mCard mWhite">3♠</span>
+                </div>
+              </td>
+            </tr>
+
+            <tr class="handsRow">
+              <td>
+                Hohe Karte – High Card
+                <span class="handNameSub">keine Kombination</span>
+              </td>
+              <td>
+                <div class="miniCards">
+                  <span class="mCard mRed">K♥</span><span class="mCard mWhite">2♠</span><span class="mCard mWhite">8♣</span><span class="mCard mRed">J♦</span><span class="mCard mRed">6♥</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="modalNote">
+          Diese Liste ist statisch und dient nur als Nachschlagehilfe.
+        </div>
+      </div>
     </div>
   </div>
 
@@ -489,7 +825,7 @@ function cardHTML(id){
 function emptyHTML(){ return `<div class="emptyTxt">—</div>`; }
 
 /* =========================
-   7-card eval via 5-card combos (correct, not table-based)
+   7-card eval via 5-card combos (unchanged)
 ========================= */
 const COMB_7C5 = [];
 for (let a=0; a<7; a++)
@@ -558,9 +894,7 @@ function eval7(ids7){
 }
 
 /* =========================
-   Equity: Professional Improvements
-   - Exact Heads-Up from FLOP (3 known board cards) onward
-   - Adaptive Monte-Carlo (stop when CI good enough or max reached)
+   Equity Engine (unchanged)
 ========================= */
 function buildRemainingDeck(used){
   const deck=[];
@@ -582,11 +916,6 @@ function meanSeFromSums(sum, sumSq, n){
   return {mean, se};
 }
 
-/**
- * Exact Heads-Up equity for boardKnown length 3..5 (Flop/Turn/River).
- * Efficiency: enumerate board completions first -> hero evaluated once per completion.
- * Returns: { equity, winProb, tieProb, loseProb, states, mode:'exact' }
- */
 async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
   const known = boardKnown.slice();
   const missing = 5 - known.length;
@@ -598,7 +927,6 @@ async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
 
   let win=0, tie=0, lose=0;
   let equitySum = 0;
-  let states = 0;
 
   if (missing === 0){
     const board5 = known;
@@ -614,7 +942,6 @@ async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
         if (hv>ov){ win++; equitySum+=1; }
         else if (hv===ov){ tie++; equitySum+=0.5; }
         else { lose++; }
-        states++;
       }
       done += (deck0.length - i - 1);
       if (i % 6 === 0){
@@ -625,18 +952,15 @@ async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
   }
 
   if (missing === 1){
-    // Turn known (4 cards) -> enumerate river card
     const totalRunouts = deck0.length;
     for (let r=0;r<deck0.length;r++){
       const river = deck0[r];
       const board5 = [...known, river];
       const hv = eval7([hero2[0], hero2[1], board5[0],board5[1],board5[2],board5[3],board5[4]]);
 
-      // deck without river
       const deck1 = [];
       for (let i=0;i<deck0.length;i++) if (i!==r) deck1.push(deck0[i]);
 
-      // opponent combos
       for (let i=0;i<deck1.length;i++){
         for (let j=i+1;j<deck1.length;j++){
           const o1=deck1[i], o2=deck1[j];
@@ -644,7 +968,6 @@ async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
           if (hv>ov){ win++; equitySum+=1; }
           else if (hv===ov){ tie++; equitySum+=0.5; }
           else { lose++; }
-          states++;
         }
       }
       if (r % 2 === 0){
@@ -655,7 +978,6 @@ async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
   }
 
   if (missing === 2){
-    // Flop known (3 cards) -> enumerate turn+river unordered pairs
     const totalPairs = (deck0.length * (deck0.length-1)) / 2;
     let donePairs = 0;
 
@@ -665,7 +987,6 @@ async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
         const board5 = [...known, turn, river];
         const hv = eval7([hero2[0], hero2[1], board5[0],board5[1],board5[2],board5[3],board5[4]]);
 
-        // deck without (a,b)
         const deck1 = [];
         for (let i=0;i<deck0.length;i++){
           if (i!==a && i!==b) deck1.push(deck0[i]);
@@ -678,7 +999,6 @@ async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
             if (hv>ov){ win++; equitySum+=1; }
             else if (hv===ov){ tie++; equitySum+=0.5; }
             else { lose++; }
-            states++;
           }
         }
 
@@ -702,13 +1022,6 @@ async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
   };
 }
 
-/**
- * Adaptive Monte-Carlo:
- * - Runs in batches
- * - Stops early when CI half-width <= targetHalfWidth (95%) and >= minIters
- * - Or when maxIters reached
- * Returns: { equity, se, iters, winProb, tieProb, loseProb, mode:'mc' }
- */
 async function monteCarloEquityAdaptive(hero2, boardKnown, opponents, opts, onProgress){
   const {minIters, maxIters, targetHalfWidth95} = opts;
 
@@ -845,6 +1158,9 @@ const calcModeEl = document.getElementById('calcMode');
 const potEl = document.getElementById('pot');
 const callEl = document.getElementById('call');
 
+const ctaHintEl = document.getElementById('ctaHint');
+const resultsPanel = document.getElementById('resultsPanel');
+
 let stage = 'pre'; // pre | flop | turn | river
 let hero = [null, null];
 let board = [null, null, null, null, null];
@@ -926,7 +1242,10 @@ function renderSlots(){
   modeHintEl.textContent = exactEligible
     ? 'Exakt möglich (Heads-Up ab Flop) – sonst Monte-Carlo'
     : 'Monte-Carlo (Exakt nur Heads-Up ab Flop)';
+
+  updateCalcEnabled();
 }
+
 function getHero(){
   if (hero[0]===null || hero[1]===null) return null;
   return [hero[0], hero[1]];
@@ -938,6 +1257,24 @@ function getBoardKnown(){
     if (board[i]!==null) arr.push(board[i]);
   }
   return arr.slice(0,5);
+}
+
+function validateForCalcLite(){
+  const h = getHero();
+  if (!h) return {ok:false, msg:'Setze beide Hole Cards.'};
+  const max = boardMax();
+  if (max>0){
+    for (let i=0;i<max;i++){
+      if (board[i]===null) return {ok:false, msg:`Setze Board ${i+1} (${stage.toUpperCase()}).`};
+    }
+  }
+  return {ok:true, msg:'Bereit zum Berechnen.'};
+}
+
+function updateCalcEnabled(){
+  const v = validateForCalcLite();
+  calcBtn.disabled = !v.ok;
+  ctaHintEl.textContent = v.msg;
 }
 
 /* Stage buttons */
@@ -960,6 +1297,27 @@ document.querySelectorAll('.stageBtn').forEach(b=>{
 
     clearErr();
     resultEl.style.display = 'none';
+    renderSlots();
+  });
+});
+
+/* Opponents slider + chips */
+oppEl.addEventListener('input', ()=>{
+  oppValEl.textContent = oppEl.value;
+  syncOppChips(Number(oppEl.value));
+  renderSlots();
+});
+function syncOppChips(val){
+  document.querySelectorAll('.chip[data-opp]').forEach(ch=>{
+    ch.classList.toggle('active', Number(ch.dataset.opp) === val);
+  });
+}
+document.querySelectorAll('.chip[data-opp]').forEach(ch=>{
+  ch.addEventListener('click', ()=>{
+    const v = Number(ch.dataset.opp);
+    oppEl.value = String(v);
+    oppValEl.textContent = String(v);
+    syncOppChips(v);
     renderSlots();
   });
 });
@@ -1049,6 +1407,7 @@ commitBtn.addEventListener('click', async ()=>{
   else renderSlots();
 
   resultEl.style.display = 'none';
+  updateCalcEnabled();
 });
 
 /* Undo / Reset */
@@ -1062,6 +1421,7 @@ undoBtn.addEventListener('click', ()=>{
   setSelected(h.type, h.index);
   renderSlots();
   resultEl.style.display = 'none';
+  updateCalcEnabled();
 });
 resetBtn.addEventListener('click', ()=>{
   clearErr();
@@ -1073,10 +1433,10 @@ resetBtn.addEventListener('click', ()=>{
   setStatus('Bereit.', 0);
   setSelected('hero', 0);
   renderSlots();
+  updateCalcEnabled();
 });
 
-/* Opponents / Advanced */
-oppEl.addEventListener('input', ()=>{ oppValEl.textContent = oppEl.value; renderSlots(); });
+/* Advanced */
 itersEl.addEventListener('input', ()=>{ itersValEl.textContent = itersEl.value; });
 
 /* Advice */
@@ -1103,19 +1463,10 @@ function decideAdvice(equity, pot, call){
 
 /* Calc */
 function validateForCalc(){
-  const h = getHero();
-  if (!h){
-    showErr('Bitte zuerst beide Hole Cards setzen.');
+  const v = validateForCalcLite();
+  if (!v.ok){
+    showErr(v.msg);
     return false;
-  }
-  const max = boardMax();
-  if (max>0){
-    for (let i=0;i<max;i++){
-      if (board[i]===null){
-        showErr(`Bitte Board ${i+1} setzen (Stage: ${stage.toUpperCase()}).`);
-        return false;
-      }
-    }
   }
   return true;
 }
@@ -1131,8 +1482,6 @@ calcBtn.addEventListener('click', async ()=>{
   const h = getHero();
   const boardKnown = getBoardKnown();
 
-  // Auto selection:
-  // exact if heads-up and boardKnown >= flop
   const exactEligible = (opponents===1 && boardKnown.length>=3);
   let mode = 'mc';
   if (selectedMode==='exact') mode='exact';
@@ -1164,11 +1513,10 @@ calcBtn.addEventListener('click', async ()=>{
       details2 = `${stage.toUpperCase()} · Gegnerhände: zufällig · exakt`;
       setStatus('Fertig (exakt).', 1);
     } else {
-      // Adaptive MC settings (professional defaults)
-      const targetHalf = 0.010;   // 1.0% absolute half-width @95%
+      const targetHalf = 0.010;   // 1.0% @95%
       const minIters = 20000;
 
-      setStatus('Monte-Carlo…', 0.08);
+      setStatus('Monte-Carlo…', 0.10);
       const res = await monteCarloEquityAdaptive(
         h, boardKnown, opponents,
         { minIters: Math.min(minIters, maxIters), maxIters, targetHalfWidth95: targetHalf },
@@ -1202,13 +1550,53 @@ calcBtn.addEventListener('click', async ()=>{
     details2El.textContent = details2;
 
     resultEl.style.display = 'grid';
+
+    // UX: scroll to results
+    resultsPanel.scrollIntoView({behavior:'smooth', block:'start'});
   } catch(e){
     showErr('Fehler bei der Berechnung: ' + (e && e.message ? e.message : String(e)));
   } finally {
-    calcBtn.disabled = false;
+    calcBtn.disabled = !validateForCalcLite().ok;
     resetBtn.disabled = false;
     undoBtn.disabled = (history.length===0);
     commitBtn.disabled = false;
+  }
+});
+
+/* =========================
+   NEW: Modal open/close logic
+========================= */
+const handsBtn = document.getElementById('handsBtn');
+const handsModal = document.getElementById('handsModal');
+const handsClose = document.getElementById('handsClose');
+let lastFocusEl = null;
+
+function openHands(){
+  lastFocusEl = document.activeElement;
+  handsModal.style.display = 'flex';
+  // focus modal container
+  const modalBox = handsModal.querySelector('.modal');
+  modalBox.focus();
+  document.body.style.overflow = 'hidden';
+}
+function closeHands(){
+  handsModal.style.display = 'none';
+  document.body.style.overflow = '';
+  if (lastFocusEl && typeof lastFocusEl.focus === 'function') lastFocusEl.focus();
+}
+
+handsBtn.addEventListener('click', openHands);
+handsClose.addEventListener('click', closeHands);
+
+// click backdrop closes (but not clicking inside modal)
+handsModal.addEventListener('click', (e)=>{
+  if (e.target === handsModal) closeHands();
+});
+
+// ESC closes
+document.addEventListener('keydown', (e)=>{
+  if (e.key === 'Escape' && handsModal.style.display === 'flex'){
+    closeHands();
   }
 });
 
@@ -1218,9 +1606,11 @@ function init(){
   itersValEl.textContent = itersEl.value;
   undoBtn.disabled = true;
   updatePreview();
+  syncOppChips(Number(oppEl.value));
   setSelected('hero', 0);
   setStatus('Bereit.', 0);
   renderSlots();
+  updateCalcEnabled();
 }
 init();
 </script>
