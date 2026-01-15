@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hold’em Helper – Pro (UX)</title>
+  <title>Hold’em Helper – Pro (UX+)</title>
   <style>
     :root{
       --bg1:#0b1220; --bg2:#07252a;
@@ -36,6 +36,7 @@
       font-size:20px; margin:0; letter-spacing:.2px; font-weight:950;
       background: linear-gradient(135deg, rgba(122,167,255,.95), rgba(83,240,181,.85));
       -webkit-background-clip:text; background-clip:text; color:transparent;
+      text-shadow: 0 0 24px rgba(122,167,255,.12);
     }
     .hdrRight{
       display:flex; align-items:center; gap:10px; flex-wrap:wrap;
@@ -58,12 +59,15 @@
       color: var(--text);
       font-weight:950; font-size:12px;
       cursor:pointer;
-      transition: background .2s ease, transform .06s ease;
+      transition: background .2s ease, transform .08s ease, box-shadow .2s ease;
       user-select:none;
       white-space:nowrap;
     }
-    .iconBtn:hover{ background: rgba(255,255,255,.08); }
-    .iconBtn:active{ transform: translateY(1px); }
+    .iconBtn:hover{
+      background: rgba(255,255,255,.08);
+      box-shadow: 0 0 0 3px rgba(122,167,255,.10) inset;
+    }
+    .iconBtn:active{ transform: translateY(1px) scale(.99); }
 
     .grid{ display:grid; grid-template-columns:1fr; gap:12px; }
     .panel{
@@ -72,6 +76,12 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow:hidden;
+      transform: translateY(0);
+      animation: rise .32s cubic-bezier(.2,.9,.2,1) both;
+    }
+    @keyframes rise{
+      from{ opacity:0; transform: translateY(10px); }
+      to{ opacity:1; transform: translateY(0); }
     }
     .hd{
       padding:12px 14px;
@@ -104,10 +114,13 @@
       background: transparent;
       color: var(--muted);
       font-weight:950; font-size:12px;
+      transition: background .2s ease, transform .08s ease, color .2s ease;
     }
+    .seg button:hover{ transform: translateY(-1px); color: var(--text); }
     .seg button.active{
       background: linear-gradient(135deg, rgba(122,167,255,.90), rgba(83,240,181,.62));
       color:#081124;
+      box-shadow: 0 10px 30px rgba(0,0,0,.18);
     }
 
     .sectionLabel{ font-size:12px; color:var(--muted); font-weight:900; margin:0 0 8px 2px; }
@@ -120,15 +133,30 @@
       background: rgba(255,255,255,.03);
       display:flex; align-items:center; justify-content:center;
       cursor:pointer; user-select:none;
-      transition: transform .12s ease, background .2s ease, border-color .2s ease;
+      transition: transform .14s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
       position:relative;
+    }
+    .slot:hover{
+      background: rgba(255,255,255,.05);
+      box-shadow: 0 0 0 2px rgba(255,255,255,.05) inset;
     }
     .slot:active{ transform: translateY(1px) scale(.99); }
     .slot.sel{
       border-color: rgba(122,167,255,.65);
-      box-shadow: 0 0 0 3px rgba(122,167,255,.18) inset;
+      box-shadow:
+        0 0 0 3px rgba(122,167,255,.18) inset,
+        0 12px 30px rgba(122,167,255,.10);
       background: rgba(122,167,255,.08);
     }
+    .slot.pulse{
+      animation: pulse .55s cubic-bezier(.2,.9,.2,1) both;
+    }
+    @keyframes pulse{
+      0%{ transform: scale(1); }
+      45%{ transform: scale(1.04); }
+      100%{ transform: scale(1); }
+    }
+
     .cardFace{
       width:64px; height:84px;
       border-radius: 14px;
@@ -137,6 +165,7 @@
       display:flex; align-items:center; justify-content:center;
       font-weight:950; letter-spacing:.4px; font-size:20px;
       position:relative;
+      transition: transform .18s ease;
     }
     .mini{ position:absolute; left:8px; top:6px; font-size:11px; font-weight:950; }
     .mini2{ position:absolute; right:8px; bottom:6px; font-size:11px; font-weight:950; opacity:.85; transform: rotate(180deg); }
@@ -161,36 +190,132 @@
       display:flex; align-items:center; justify-content:center;
       position:relative;
       overflow:hidden;
+      box-shadow: 0 18px 50px rgba(0,0,0,.25);
+    }
+    .preview::after{
+      content:"";
+      position:absolute;
+      inset:-30% -60%;
+      background: radial-gradient(closest-side, rgba(83,240,181,.22), transparent 60%);
+      transform: translateX(-20%);
+      filter: blur(2px);
+      opacity:.55;
+      pointer-events:none;
     }
     .preview .cardFace{
       width:92px; height:120px; border-radius:18px;
       font-size:30px;
+      box-shadow: 0 12px 32px rgba(0,0,0,.18);
     }
+    .preview.bump .cardFace{
+      transform: scale(1.02);
+    }
+
     label{ display:block; font-size:12px; color:var(--muted); margin:8px 0 6px; font-weight:900; }
 
+    /* ===== Slider: nicer track + filled progress ===== */
     .range{
       width:100%;
       -webkit-appearance:none;
       appearance:none;
-      height:10px;
+      height:12px;
       border-radius:999px;
-      background: linear-gradient(90deg, rgba(122,167,255,.75), rgba(83,240,181,.55));
       outline:none;
       border:1px solid rgba(255,255,255,.10);
+      --p: 50;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(122,167,255,.90) 0%,
+          rgba(83,240,181,.72) calc(var(--p)*1%),
+          rgba(255,255,255,.10) calc(var(--p)*1%),
+          rgba(255,255,255,.06) 100%
+        );
+      box-shadow: 0 0 0 1px rgba(255,255,255,.04) inset;
+      transition: filter .18s ease;
     }
+    .range:hover{ filter: brightness(1.05); }
     .range::-webkit-slider-thumb{
       -webkit-appearance:none; appearance:none;
-      width:22px; height:22px; border-radius:999px;
-      background: rgba(255,255,255,.92);
+      width:24px; height:24px; border-radius:999px;
+      background: rgba(255,255,255,.94);
       border: 2px solid rgba(0,0,0,.18);
-      box-shadow: 0 10px 25px rgba(0,0,0,.25);
+      box-shadow:
+        0 10px 25px rgba(0,0,0,.25),
+        0 0 0 6px rgba(122,167,255,.14);
+      transition: transform .12s ease, box-shadow .2s ease;
+    }
+    .range:active::-webkit-slider-thumb{
+      transform: scale(1.05);
+      box-shadow:
+        0 10px 25px rgba(0,0,0,.25),
+        0 0 0 7px rgba(83,240,181,.18);
     }
     .range::-moz-range-thumb{
-      width:22px; height:22px; border-radius:999px;
-      background: rgba(255,255,255,.92);
+      width:24px; height:24px; border-radius:999px;
+      background: rgba(255,255,255,.94);
       border: 2px solid rgba(0,0,0,.18);
-      box-shadow: 0 10px 25px rgba(0,0,0,.25);
+      box-shadow:
+        0 10px 25px rgba(0,0,0,.25),
+        0 0 0 6px rgba(122,167,255,.14);
+      transition: transform .12s ease, box-shadow .2s ease;
     }
+    .range:active::-moz-range-thumb{
+      transform: scale(1.05);
+      box-shadow:
+        0 10px 25px rgba(0,0,0,.25),
+        0 0 0 7px rgba(83,240,181,.18);
+    }
+#suit.range{
+  background:
+    linear-gradient(90deg,
+      var(--suitA, rgba(148,176,255,.92)),
+      var(--suitB, rgba(90,132,255,.78))
+    ),
+    linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,0));
+  background-blend-mode: overlay;
+  transition: filter .18s ease, background .35s ease;
+  /* KEIN overflow:hidden; -> sonst wird Thumb/Glow abgeschnitten */
+  box-shadow: 0 0 0 1px rgba(255,255,255,.04) inset;
+}
+
+
+/* dezenter "Sheen" für mehr Premium-Look */
+#suit.range::after{
+  content:"";
+  position:absolute;
+  inset:-40% -60%;
+  background: radial-gradient(closest-side, rgba(255,255,255,.18), transparent 65%);
+  transform: translateX(-10%);
+  pointer-events:none;
+  opacity:.45;
+  transition: opacity .35s ease;
+}
+#suit.range:hover::after{ opacity:.55; }
+
+/* Thumb bekommt leichte Suit-Tönung */
+#suit.range::-webkit-slider-thumb{
+  box-shadow:
+    0 10px 25px rgba(0,0,0,.25),
+    0 0 0 7px var(--suitGlow, rgba(122,167,255,.18));
+}
+#suit.range:active::-webkit-slider-thumb{
+  box-shadow:
+    0 10px 25px rgba(0,0,0,.25),
+    0 0 0 8px var(--suitGlow, rgba(83,240,181,.20));
+}
+#suit.range::-moz-range-thumb{
+  box-shadow:
+    0 10px 25px rgba(0,0,0,.25),
+    0 0 0 7px var(--suitGlow, rgba(122,167,255,.18));
+}
+#suit.range:active::-moz-range-thumb{
+  box-shadow:
+    0 10px 25px rgba(0,0,0,.25),
+    0 0 0 8px var(--suitGlow, rgba(83,240,181,.20));
+}
+
+
     .kv{ display:flex; justify-content:space-between; gap:10px; font-size:12px; color: var(--muted); margin-top:6px; }
 
     .btnRow{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
@@ -203,18 +328,27 @@
       cursor:pointer;
       font-weight:950;
       letter-spacing:.2px;
-      transition: transform .06s ease, background .2s ease;
+      transition: transform .08s ease, background .2s ease, box-shadow .2s ease;
       font-size:13px;
     }
-    button:hover{ background: rgba(255,255,255,.09); }
-    button:active{ transform: translateY(1px); }
+    button:hover{
+      background: rgba(255,255,255,.09);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.04) inset;
+    }
+    button:active{ transform: translateY(1px) scale(.99); }
     button.primary{
       background: linear-gradient(135deg, rgba(122,167,255,.92), rgba(83,240,181,.72));
       color:#081124;
       border-color: rgba(255,255,255,.18);
+      box-shadow: 0 14px 40px rgba(0,0,0,.22);
+    }
+    button.primary:hover{
+      box-shadow:
+        0 16px 46px rgba(0,0,0,.25),
+        0 0 0 3px rgba(122,167,255,.10) inset;
     }
     button.ghost{ background: rgba(255,255,255,.03); }
-    button:disabled{ opacity:.55; cursor:not-allowed; }
+    button:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
 
     .err{
       display:none;
@@ -226,6 +360,13 @@
       margin-top:10px;
       font-size:12.5px;
       line-height:1.35;
+      animation: shake .28s ease both;
+    }
+    @keyframes shake{
+      0%{ transform: translateX(0); }
+      35%{ transform: translateX(-2px); }
+      70%{ transform: translateX(2px); }
+      100%{ transform: translateX(0); }
     }
 
     .resultGrid{
@@ -241,7 +382,9 @@
       border-radius: 16px;
       padding:12px;
       background: rgba(255,255,255,.03);
+      transition: transform .18s ease;
     }
+    .kpi:hover{ transform: translateY(-1px); }
     .k{ font-size:12px; color:var(--muted); margin-bottom:6px; font-weight:950; }
     .v{ font-size:18px; font-weight:950; letter-spacing:.2px; }
     .s{ font-size:12px; color:var(--muted); margin-top:6px; line-height:1.35; }
@@ -285,6 +428,11 @@
       color:var(--text);
       outline:none;
       font-weight:900;
+      transition: box-shadow .2s ease, background .2s ease;
+    }
+    input[type="number"]:focus, select:focus{
+      box-shadow: 0 0 0 3px rgba(122,167,255,.16);
+      background: rgba(255,255,255,.05);
     }
     select option{ background:#0c1628; }
 
@@ -310,6 +458,7 @@
       height:100%;
       width:0%;
       background: linear-gradient(90deg, rgba(122,167,255,.85), rgba(83,240,181,.75));
+      transition: width .18s ease;
     }
     .statusTxt{ font-size:12px; color:var(--muted); font-weight:950; }
 
@@ -331,11 +480,14 @@
       color: var(--muted);
       font-weight:950;
       font-size:12px;
+      transition: background .2s ease, transform .08s ease, border-color .2s ease;
     }
+    .chip:hover{ transform: translateY(-1px); border-color: rgba(122,167,255,.25); }
     .chip.active{
       background: rgba(122,167,255,.14);
       color: var(--text);
       border-color: rgba(122,167,255,.35);
+      box-shadow: 0 0 0 3px rgba(122,167,255,.10) inset;
     }
     .bigCTA{
       width:100%;
@@ -350,7 +502,7 @@
       line-height:1.35;
     }
 
-    /* ===== Hand-Rankings Modal (NEW) ===== */
+    /* ===== Hand-Rankings Modal ===== */
     .modalOverlay{
       position:fixed;
       inset:0;
@@ -360,7 +512,11 @@
       justify-content:center;
       padding:16px;
       z-index: 10050;
+      opacity: 0;
+      transition: opacity .18s ease;
     }
+    .modalOverlay.show{ opacity: 1; }
+
     .modal{
       width:min(820px, 100%);
       max-height: min(76vh, 720px);
@@ -369,6 +525,13 @@
       border:1px solid rgba(255,255,255,.14);
       background: rgba(15,27,46,.92);
       box-shadow: 0 28px 80px rgba(0,0,0,.55);
+      transform: translateY(10px) scale(.985);
+      opacity: 0;
+      transition: transform .22s cubic-bezier(.2,.9,.2,1), opacity .18s ease;
+    }
+    .modalOverlay.show .modal{
+      transform: translateY(0) scale(1);
+      opacity: 1;
     }
     .modalHd{
       position:sticky;
@@ -397,8 +560,10 @@
       padding:8px 10px;
       font-weight:950;
       cursor:pointer;
+      transition: background .2s ease, transform .08s ease;
     }
     .closeBtn:hover{ background: rgba(255,255,255,.09); }
+    .closeBtn:active{ transform: translateY(1px) scale(.99); }
 
     .modalBody{ padding:12px 14px 14px; }
     .handsTable{
@@ -434,7 +599,6 @@
       margin-top:3px;
     }
 
-    /* Mini cards for the static examples */
     .miniCards{
       display:flex;
       gap:6px;
@@ -463,6 +627,12 @@
       font-size:12px;
       color: var(--muted);
       line-height:1.35;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .panel, .slot.pulse, .err, .modalOverlay, .modal, .bar > div { animation:none !important; transition:none !important; }
+      .floatCard{ display:none !important; }
     }
   </style>
 </head>
@@ -608,6 +778,7 @@
               <div class="k">Equity</div>
               <div class="v" id="equity">—</div>
               <div class="s" id="equityMeta">Score: —/100</div>
+              <div class="s" id="handNow">Aktuelle Kombination: —</div>
               <div class="s" id="wtl">W/T/L: —</div>
               <div class="s" id="ci">—</div>
             </div>
@@ -641,7 +812,7 @@
     </div>
   </div>
 
-  <!-- ===== Hand-Rankings Modal (NEW) ===== -->
+  <!-- Hand-Rankings Modal -->
   <div id="handsModal" class="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="handsTitle">
     <div class="modal" tabindex="-1">
       <div class="modalHd">
@@ -652,130 +823,68 @@
         <table class="handsTable" aria-label="Poker Hand Rankings">
           <tbody>
             <tr class="handsRow">
-              <td>
-                Royal Flush
-                <span class="handNameSub">A-K-Q-J-10 gleiche Farbe</span>
-              </td>
-              <td>
-                <div class="miniCards">
-                  <span class="mCard mRed">10♦</span><span class="mCard mRed">J♦</span><span class="mCard mRed">Q♦</span><span class="mCard mRed">K♦</span><span class="mCard mRed">A♦</span>
-                </div>
-              </td>
+              <td>Royal Flush<span class="handNameSub">A-K-Q-J-10 gleiche Farbe</span></td>
+              <td><div class="miniCards">
+                <span class="mCard mRed">10♦</span><span class="mCard mRed">J♦</span><span class="mCard mRed">Q♦</span><span class="mCard mRed">K♦</span><span class="mCard mRed">A♦</span>
+              </div></td>
             </tr>
-
             <tr class="handsRow">
-              <td>
-                Straight Flush
-                <span class="handNameSub">Straße + Flush</span>
-              </td>
-              <td>
-                <div class="miniCards">
-                  <span class="mCard mWhite">7♣</span><span class="mCard mWhite">8♣</span><span class="mCard mWhite">9♣</span><span class="mCard mWhite">10♣</span><span class="mCard mWhite">J♣</span>
-                </div>
-              </td>
+              <td>Straight Flush<span class="handNameSub">Straße + Flush</span></td>
+              <td><div class="miniCards">
+                <span class="mCard mWhite">7♣</span><span class="mCard mWhite">8♣</span><span class="mCard mWhite">9♣</span><span class="mCard mWhite">10♣</span><span class="mCard mWhite">J♣</span>
+              </div></td>
             </tr>
-
             <tr class="handsRow">
-              <td>
-                Vierling – Quads
-                <span class="handNameSub">4 gleiche Karten</span>
-              </td>
-              <td>
-                <div class="miniCards">
-                  <span class="mCard mWhite">4♠</span><span class="mCard mRed">4♥</span><span class="mCard mWhite">4♣</span><span class="mCard mRed">4♦</span><span class="mCard mWhite">K♠</span>
-                </div>
-              </td>
+              <td>Vierling – Quads<span class="handNameSub">4 gleiche Karten</span></td>
+              <td><div class="miniCards">
+                <span class="mCard mWhite">4♠</span><span class="mCard mRed">4♥</span><span class="mCard mWhite">4♣</span><span class="mCard mRed">4♦</span><span class="mCard mWhite">K♠</span>
+              </div></td>
             </tr>
-
             <tr class="handsRow">
-              <td>
-                Full House
-                <span class="handNameSub">Drilling + Paar</span>
-              </td>
-              <td>
-                <div class="miniCards">
-                  <span class="mCard mWhite">10♣</span><span class="mCard mRed">10♦</span><span class="mCard mWhite">10♠</span><span class="mCard mWhite">2♣</span><span class="mCard mRed">2♥</span>
-                </div>
-              </td>
+              <td>Full House<span class="handNameSub">Drilling + Paar</span></td>
+              <td><div class="miniCards">
+                <span class="mCard mWhite">10♣</span><span class="mCard mRed">10♦</span><span class="mCard mWhite">10♠</span><span class="mCard mWhite">2♣</span><span class="mCard mRed">2♥</span>
+              </div></td>
             </tr>
-
             <tr class="handsRow">
-              <td>
-                Flush
-                <span class="handNameSub">5 gleiche Farbe</span>
-              </td>
-              <td>
-                <div class="miniCards">
-                  <span class="mCard mWhite">K♠</span><span class="mCard mWhite">9♠</span><span class="mCard mWhite">J♠</span><span class="mCard mWhite">5♠</span><span class="mCard mWhite">A♠</span>
-                </div>
-              </td>
+              <td>Flush<span class="handNameSub">5 gleiche Farbe</span></td>
+              <td><div class="miniCards">
+                <span class="mCard mWhite">K♠</span><span class="mCard mWhite">9♠</span><span class="mCard mWhite">J♠</span><span class="mCard mWhite">5♠</span><span class="mCard mWhite">A♠</span>
+              </div></td>
             </tr>
-
             <tr class="handsRow">
-              <td>
-                Straße – Straight
-                <span class="handNameSub">5 in Folge</span>
-              </td>
-              <td>
-                <div class="miniCards">
-                  <span class="mCard mWhite">7♣</span><span class="mCard mRed">8♦</span><span class="mCard mWhite">9♠</span><span class="mCard mRed">10♥</span><span class="mCard mWhite">J♣</span>
-                </div>
-              </td>
+              <td>Straße – Straight<span class="handNameSub">5 in Folge</span></td>
+              <td><div class="miniCards">
+                <span class="mCard mWhite">7♣</span><span class="mCard mRed">8♦</span><span class="mCard mWhite">9♠</span><span class="mCard mRed">10♥</span><span class="mCard mWhite">J♣</span>
+              </div></td>
             </tr>
-
             <tr class="handsRow">
-              <td>
-                Drilling – Three of a Kind
-                <span class="handNameSub">3 gleiche Karten</span>
-              </td>
-              <td>
-                <div class="miniCards">
-                  <span class="mCard mRed">2♦</span><span class="mCard mWhite">2♣</span><span class="mCard mWhite">2♠</span><span class="mCard mRed">6♦</span><span class="mCard mRed">A♥</span>
-                </div>
-              </td>
+              <td>Drilling – Three of a Kind<span class="handNameSub">3 gleiche Karten</span></td>
+              <td><div class="miniCards">
+                <span class="mCard mRed">2♦</span><span class="mCard mWhite">2♣</span><span class="mCard mWhite">2♠</span><span class="mCard mRed">6♦</span><span class="mCard mRed">A♥</span>
+              </div></td>
             </tr>
-
             <tr class="handsRow">
-              <td>
-                Zwei Paare – Two Pair
-                <span class="handNameSub">2 Paare</span>
-              </td>
-              <td>
-                <div class="miniCards">
-                  <span class="mCard mWhite">8♣</span><span class="mCard mRed">8♦</span><span class="mCard mRed">7♥</span><span class="mCard mWhite">7♣</span><span class="mCard mWhite">Q♠</span>
-                </div>
-              </td>
+              <td>Zwei Paare – Two Pair<span class="handNameSub">2 Paare</span></td>
+              <td><div class="miniCards">
+                <span class="mCard mWhite">8♣</span><span class="mCard mRed">8♦</span><span class="mCard mRed">7♥</span><span class="mCard mWhite">7♣</span><span class="mCard mWhite">Q♠</span>
+              </div></td>
             </tr>
-
             <tr class="handsRow">
-              <td>
-                Ein Paar – One Pair
-                <span class="handNameSub">1 Paar</span>
-              </td>
-              <td>
-                <div class="miniCards">
-                  <span class="mCard mWhite">5♠</span><span class="mCard mRed">5♦</span><span class="mCard mWhite">J♣</span><span class="mCard mRed">10♥</span><span class="mCard mWhite">3♠</span>
-                </div>
-              </td>
+              <td>Ein Paar – One Pair<span class="handNameSub">1 Paar</span></td>
+              <td><div class="miniCards">
+                <span class="mCard mWhite">5♠</span><span class="mCard mRed">5♦</span><span class="mCard mWhite">J♣</span><span class="mCard mRed">10♥</span><span class="mCard mWhite">3♠</span>
+              </div></td>
             </tr>
-
             <tr class="handsRow">
-              <td>
-                Hohe Karte – High Card
-                <span class="handNameSub">keine Kombination</span>
-              </td>
-              <td>
-                <div class="miniCards">
-                  <span class="mCard mRed">K♥</span><span class="mCard mWhite">2♠</span><span class="mCard mWhite">8♣</span><span class="mCard mRed">J♦</span><span class="mCard mRed">6♥</span>
-                </div>
-              </td>
+              <td>Hohe Karte – High Card<span class="handNameSub">keine Kombination</span></td>
+              <td><div class="miniCards">
+                <span class="mCard mRed">K♥</span><span class="mCard mWhite">2♠</span><span class="mCard mWhite">8♣</span><span class="mCard mRed">J♦</span><span class="mCard mRed">6♥</span>
+              </div></td>
             </tr>
           </tbody>
         </table>
-
-        <div class="modalNote">
-          Diese Liste ist statisch und dient nur als Nachschlagehilfe.
-        </div>
+        <div class="modalNote">Diese Liste ist statisch und dient nur als Nachschlagehilfe.</div>
       </div>
     </div>
   </div>
@@ -1115,6 +1224,53 @@ async function monteCarloEquityAdaptive(hero2, boardKnown, opponents, opts, onPr
 }
 
 /* =========================
+   NEW: Current Hand Name (static classification from known cards)
+========================= */
+const CAT_DE = [
+  'Hohe Karte',
+  'Ein Paar',
+  'Zwei Paare',
+  'Drilling',
+  'Straße',
+  'Flush',
+  'Full House',
+  'Vierling',
+  'Straight Flush'
+];
+function getStraightHighFromPacked(packed20){
+  return (packed20 >>> 16) & 0xF; // first nibble
+}
+function nameFromEval5Value(v){
+  const cat = (v >>> 20) & 0xF;
+  if (cat === 8){
+    const packed = v & ((1<<20)-1);
+    const hi = getStraightHighFromPacked(packed);
+    if (hi === 14) return 'Royal Flush';
+    return 'Straight Flush';
+  }
+  return CAT_DE[cat] || '—';
+}
+function currentHandName(hero2, boardKnown){
+  const cards = [...hero2, ...boardKnown].filter(x => x !== null && x !== undefined);
+  if (cards.length < 2) return '—';
+  if (cards.length < 5){
+    if (cards.length === 2 && ID_RANK[cards[0]] === ID_RANK[cards[1]]) return 'Ein Paar (Pocket Pair)';
+    return 'Hohe Karte';
+  }
+  const n = cards.length;
+  let best = -1;
+  for (let a=0;a<n-4;a++)
+  for (let b=a+1;b<n-3;b++)
+  for (let c=b+1;c<n-2;c++)
+  for (let d=c+1;d<n-1;d++)
+  for (let e=d+1;e<n;e++){
+    const v = eval5([cards[a], cards[b], cards[c], cards[d], cards[e]]);
+    if (v > best) best = v;
+  }
+  return nameFromEval5Value(best);
+}
+
+/* =========================
    UI + App State
 ========================= */
 const deckLeftEl = document.getElementById('deckLeft');
@@ -1142,6 +1298,7 @@ const barFill = document.getElementById('barFill');
 const resultEl = document.getElementById('result');
 const equityEl = document.getElementById('equity');
 const equityMetaEl = document.getElementById('equityMeta');
+const handNowEl = document.getElementById('handNow');
 const wtlEl = document.getElementById('wtl');
 const ciEl = document.getElementById('ci');
 const adviceEl = document.getElementById('advice');
@@ -1206,19 +1363,20 @@ function nextEmptySlot(){
   for (let i=0;i<max;i++) if (board[i]===null) return {type:'board', index:i};
   return null;
 }
-function setSelected(t,i){
+function setSelected(t,i, pulse=true){
   selected = {type:t, index:i};
   targetHint.textContent = `Ziel: ${slotTitle(t,i)}`;
-  renderSlots();
+  renderSlots(pulse);
 }
-function renderSlots(){
+function renderSlots(pulseSelected=false){
   heroSlotsEl.innerHTML = '';
   for (let i=0;i<2;i++){
     const el = document.createElement('div');
-    el.className = 'slot' + ((selected.type==='hero' && selected.index===i) ? ' sel' : '');
+    const isSel = (selected.type==='hero' && selected.index===i);
+    el.className = 'slot' + (isSel ? ' sel' : '') + (isSel && pulseSelected ? ' pulse' : '');
     el.dataset.type='hero'; el.dataset.index=String(i);
     el.innerHTML = (hero[i]===null) ? emptyHTML() : cardHTML(hero[i]);
-    el.addEventListener('click', ()=>setSelected('hero', i));
+    el.addEventListener('click', ()=>setSelected('hero', i, true));
     heroSlotsEl.appendChild(el);
   }
 
@@ -1226,10 +1384,11 @@ function renderSlots(){
   boardSlotsEl.innerHTML = '';
   for (let i=0;i<max;i++){
     const el = document.createElement('div');
-    el.className = 'slot' + ((selected.type==='board' && selected.index===i) ? ' sel' : '');
+    const isSel = (selected.type==='board' && selected.index===i);
+    el.className = 'slot' + (isSel ? ' sel' : '') + (isSel && pulseSelected ? ' pulse' : '');
     el.dataset.type='board'; el.dataset.index=String(i);
     el.innerHTML = (board[i]===null) ? emptyHTML() : cardHTML(board[i]);
-    el.addEventListener('click', ()=>setSelected('board', i));
+    el.addEventListener('click', ()=>setSelected('board', i, true));
     boardSlotsEl.appendChild(el);
   }
 
@@ -1277,6 +1436,45 @@ function updateCalcEnabled(){
   ctaHintEl.textContent = v.msg;
 }
 
+/* ===== NEW: slider progress fill helper ===== */
+function setRangeProgress(el){
+  const min = Number(el.min || 0);
+  const max = Number(el.max || 100);
+  const val = Number(el.value || 0);
+  const p = (max === min) ? 0 : ((val - min) / (max - min)) * 100;
+  el.style.setProperty('--p', String(Math.max(0, Math.min(100, p))));
+}
+function wireRange(el){
+  setRangeProgress(el);
+  el.addEventListener('input', ()=>setRangeProgress(el));
+}
+function setSuitTrack(){
+  const s = Number(suitEl.value);
+
+  // Farbpalette näher am Symbol:
+  // ♠ kühl/steel-blue, ♥ ruby, ♦ amber-gold, ♣ emerald/teal
+  const map = [
+    { a:'rgba(148,176,255,.92)', b:'rgba(90,132,255,.78)', glow:'rgba(148,176,255,.22)' }, // ♠
+    { a:'rgba(255,96,132,.92)',  b:'rgba(255,72,104,.80)', glow:'rgba(255,96,132,.22)' }, // ♥
+    { a:'rgba(255,198,92,.92)',  b:'rgba(255,140,60,.78)', glow:'rgba(255,198,92,.22)' }, // ♦
+    { a:'rgba(82,240,182,.86)',  b:'rgba(36,196,148,.78)', glow:'rgba(82,240,182,.22)' }, // ♣
+  ];
+
+  const c = map[s] || map[0];
+
+  // smoother: wir "crossfaden" über CSS-Variablen + kurze filter Animation
+  suitEl.style.setProperty('--suitA', c.a);
+  suitEl.style.setProperty('--suitB', c.b);
+  suitEl.style.setProperty('--suitGlow', c.glow);
+
+  // Mini-Impulse für weiches Feedback (ohne Layout-Jitter)
+  suitEl.animate(
+    [{ filter:'brightness(1)' }, { filter:'brightness(1.08)' }, { filter:'brightness(1)' }],
+    { duration: 260, easing:'cubic-bezier(.2,.9,.2,1)' }
+  );
+}
+
+
 /* Stage buttons */
 document.querySelectorAll('.stageBtn').forEach(b=>{
   b.addEventListener('click', ()=>{
@@ -1293,11 +1491,11 @@ document.querySelectorAll('.stageBtn').forEach(b=>{
     undoBtn.disabled = (history.length===0);
 
     const n = nextEmptySlot() || {type:'hero', index:1};
-    setSelected(n.type, n.index);
+    setSelected(n.type, n.index, true);
 
     clearErr();
     resultEl.style.display = 'none';
-    renderSlots();
+    renderSlots(true);
   });
 });
 
@@ -1305,7 +1503,7 @@ document.querySelectorAll('.stageBtn').forEach(b=>{
 oppEl.addEventListener('input', ()=>{
   oppValEl.textContent = oppEl.value;
   syncOppChips(Number(oppEl.value));
-  renderSlots();
+  renderSlots(false);
 });
 function syncOppChips(val){
   document.querySelectorAll('.chip[data-opp]').forEach(ch=>{
@@ -1318,7 +1516,8 @@ document.querySelectorAll('.chip[data-opp]').forEach(ch=>{
     oppEl.value = String(v);
     oppValEl.textContent = String(v);
     syncOppChips(v);
-    renderSlots();
+    setRangeProgress(oppEl);
+    renderSlots(true);
   });
 });
 
@@ -1327,7 +1526,14 @@ function updatePreview(){
   const r = Number(rankEl.value);
   const s = Number(suitEl.value);
   previewCardEl.innerHTML = cardHTML(CODE_TO_ID[RANKS[r] + SUITS[s].c]);
+
+  setSuitTrack(); // <— NEU: Track-Farbe passend zum Symbol
+
+  previewEl.classList.add('bump');
+  clearTimeout(updatePreview._t);
+  updatePreview._t = setTimeout(()=>previewEl.classList.remove('bump'), 120);
 }
+
 rankEl.addEventListener('input', updatePreview);
 suitEl.addEventListener('input', updatePreview);
 
@@ -1350,11 +1556,17 @@ async function animateToSlot(cardId, slotEl){
   const scale = Math.min(1.0, end.width / start.width);
 
   await float.animate([
-    { transform: 'translate(0px,0px) scale(1)', opacity: 1 },
-    { transform: `translate(${dx}px,${dy}px) scale(${scale})`, opacity: 0.2 }
-  ], { duration: 420, easing: 'cubic-bezier(.2,.9,.2,1)' }).finished;
+    { transform: 'translate(0px,0px) scale(1)', opacity: 1, filter:'blur(0px)' },
+    { transform: `translate(${dx}px,${dy}px) scale(${scale})`, opacity: 0.15, filter:'blur(0.6px)' }
+  ], { duration: 430, easing: 'cubic-bezier(.2,.9,.2,1)' }).finished;
 
   float.remove();
+
+  // subtle "pop" feedback on target
+  slotEl.animate(
+    [{transform:'scale(1)'},{transform:'scale(1.05)'},{transform:'scale(1)'}],
+    {duration: 240, easing:'cubic-bezier(.2,.9,.2,1)'}
+  );
 }
 function getCardIdFromPicker(){
   const r = Number(rankEl.value);
@@ -1369,7 +1581,7 @@ commitBtn.addEventListener('click', async ()=>{
   let target = selected;
   if (stage==='pre' && target.type==='board'){
     target = nextEmptySlot() || {type:'hero', index:1};
-    setSelected(target.type, target.index);
+    setSelected(target.type, target.index, true);
   }
   if (target.type==='board' && target.index >= boardMax()){
     const n = nextEmptySlot();
@@ -1377,7 +1589,7 @@ commitBtn.addEventListener('click', async ()=>{
       showErr('Alle Slots belegt. Slot antippen zum Ersetzen oder Reset.');
       return;
     }
-    target = n; setSelected(n.type, n.index);
+    target = n; setSelected(n.type, n.index, true);
   }
 
   const id = getCardIdFromPicker();
@@ -1403,8 +1615,8 @@ commitBtn.addEventListener('click', async ()=>{
   undoBtn.disabled = (history.length===0);
 
   const n = nextEmptySlot();
-  if (n) setSelected(n.type, n.index);
-  else renderSlots();
+  if (n) setSelected(n.type, n.index, true);
+  else renderSlots(false);
 
   resultEl.style.display = 'none';
   updateCalcEnabled();
@@ -1418,8 +1630,8 @@ undoBtn.addEventListener('click', ()=>{
   if (h.type==='hero') hero[h.index] = h.prev;
   else board[h.index] = h.prev;
   undoBtn.disabled = (history.length===0);
-  setSelected(h.type, h.index);
-  renderSlots();
+  setSelected(h.type, h.index, true);
+  renderSlots(true);
   resultEl.style.display = 'none';
   updateCalcEnabled();
 });
@@ -1431,8 +1643,8 @@ resetBtn.addEventListener('click', ()=>{
   undoBtn.disabled = true;
   resultEl.style.display = 'none';
   setStatus('Bereit.', 0);
-  setSelected('hero', 0);
-  renderSlots();
+  setSelected('hero', 0, true);
+  renderSlots(true);
   updateCalcEnabled();
 });
 
@@ -1539,6 +1751,11 @@ calcBtn.addEventListener('click', async ()=>{
 
     equityEl.textContent = fmtPct(equity,2);
     equityMetaEl.textContent = `Score: ${score} / 100`;
+
+    // NEW: current hand name from known cards
+    const nowHand = currentHandName(h, boardKnown);
+    handNowEl.textContent = `Aktuelle Kombination: ${nowHand}`;
+
     wtlEl.textContent = `W/T/L: ${fmtPct(winProb,1)} / ${fmtPct(tieProb,1)} / ${fmtPct(loseProb,1)}`;
     ciEl.textContent = ciText;
 
@@ -1550,8 +1767,6 @@ calcBtn.addEventListener('click', async ()=>{
     details2El.textContent = details2;
 
     resultEl.style.display = 'grid';
-
-    // UX: scroll to results
     resultsPanel.scrollIntoView({behavior:'smooth', block:'start'});
   } catch(e){
     showErr('Fehler bei der Berechnung: ' + (e && e.message ? e.message : String(e)));
@@ -1564,7 +1779,7 @@ calcBtn.addEventListener('click', async ()=>{
 });
 
 /* =========================
-   NEW: Modal open/close logic
+   Modal open/close logic
 ========================= */
 const handsBtn = document.getElementById('handsBtn');
 const handsModal = document.getElementById('handsModal');
@@ -1574,42 +1789,38 @@ let lastFocusEl = null;
 function openHands(){
   lastFocusEl = document.activeElement;
   handsModal.style.display = 'flex';
-  // focus modal container
+  requestAnimationFrame(()=>handsModal.classList.add('show'));
   const modalBox = handsModal.querySelector('.modal');
   modalBox.focus();
   document.body.style.overflow = 'hidden';
 }
 function closeHands(){
-  handsModal.style.display = 'none';
-  document.body.style.overflow = '';
-  if (lastFocusEl && typeof lastFocusEl.focus === 'function') lastFocusEl.focus();
+  handsModal.classList.remove('show');
+  setTimeout(()=>{
+    handsModal.style.display = 'none';
+    document.body.style.overflow = '';
+    if (lastFocusEl && typeof lastFocusEl.focus === 'function') lastFocusEl.focus();
+  }, 180);
 }
-
 handsBtn.addEventListener('click', openHands);
 handsClose.addEventListener('click', closeHands);
-
-// click backdrop closes (but not clicking inside modal)
-handsModal.addEventListener('click', (e)=>{
-  if (e.target === handsModal) closeHands();
-});
-
-// ESC closes
-document.addEventListener('keydown', (e)=>{
-  if (e.key === 'Escape' && handsModal.style.display === 'flex'){
-    closeHands();
-  }
-});
+handsModal.addEventListener('click', (e)=>{ if (e.target === handsModal) closeHands(); });
+document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape' && handsModal.style.display === 'flex') closeHands(); });
 
 /* Init */
 function init(){
   oppValEl.textContent = oppEl.value;
   itersValEl.textContent = itersEl.value;
   undoBtn.disabled = true;
+
+  // wire range progress fills
+  [oppEl, rankEl, itersEl].forEach(wireRange);
+
   updatePreview();
   syncOppChips(Number(oppEl.value));
-  setSelected('hero', 0);
+  setSelected('hero', 0, true);
   setStatus('Bereit.', 0);
-  renderSlots();
+  renderSlots(true);
   updateCalcEnabled();
 }
 init();
