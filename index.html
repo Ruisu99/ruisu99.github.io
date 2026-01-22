@@ -2,12 +2,13 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover" />
+  <title>Hold’em Helper – Pro</title>
+
   <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
-	<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-	<meta name="color-scheme" content="dark light
-	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Luis' Hold’em Helper</title>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="color-scheme" content="dark light">
+
   <style>
     :root{
       --bg1:#0b1220; --bg2:#07252a;
@@ -28,7 +29,7 @@
         radial-gradient(800px 700px at 84% 35%, rgba(83,240,181,.14), transparent 55%),
         linear-gradient(160deg, var(--bg1), var(--bg2));
       min-height:100vh;
-      padding:14px 14px 110px;
+      padding:14px 14px 120px;
     }
     .wrap{ max-width:980px; margin:0 auto; }
 
@@ -139,6 +140,7 @@
       cursor:pointer; user-select:none;
       transition: transform .14s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
       position:relative;
+      touch-action: manipulation;
     }
     .slot:hover{
       background: rgba(255,255,255,.05);
@@ -152,9 +154,7 @@
         0 12px 30px rgba(122,167,255,.10);
       background: rgba(122,167,255,.08);
     }
-    .slot.pulse{
-      animation: pulse .55s cubic-bezier(.2,.9,.2,1) both;
-    }
+    .slot.pulse{ animation: pulse .55s cubic-bezier(.2,.9,.2,1) both; }
     @keyframes pulse{
       0%{ transform: scale(1); }
       45%{ transform: scale(1.04); }
@@ -195,6 +195,9 @@
       position:relative;
       overflow:hidden;
       box-shadow: 0 18px 50px rgba(0,0,0,.25);
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
     }
     .preview::after{
       content:"";
@@ -211,13 +214,22 @@
       font-size:30px;
       box-shadow: 0 12px 32px rgba(0,0,0,.18);
     }
-    .preview.bump .cardFace{
-      transform: scale(1.02);
+    .preview.bump .cardFace{ transform: scale(1.02); }
+    .targetChip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      font-weight:950; font-size:12px;
+      color: var(--muted);
+      margin-bottom:10px;
     }
+    .targetChip b{ color: var(--text); }
 
     label{ display:block; font-size:12px; color:var(--muted); margin:8px 0 6px; font-weight:900; }
 
-    /* ===== Slider: nicer track + filled progress ===== */
+    /* ===== Slider Base (progress fill) ===== */
     .range{
       width:100%;
       -webkit-appearance:none;
@@ -270,55 +282,39 @@
         0 10px 25px rgba(0,0,0,.25),
         0 0 0 7px rgba(83,240,181,.18);
     }
-#suit.range{
-  background:
-    linear-gradient(90deg,
-      var(--suitA, rgba(148,176,255,.92)),
-      var(--suitB, rgba(90,132,255,.78))
-    ),
-    linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,0));
-  background-blend-mode: overlay;
-  transition: filter .18s ease, background .35s ease;
-  /* KEIN overflow:hidden; -> sonst wird Thumb/Glow abgeschnitten */
-  box-shadow: 0 0 0 1px rgba(255,255,255,.04) inset;
-}
 
-
-/* dezenter "Sheen" für mehr Premium-Look */
-#suit.range::after{
-  content:"";
-  position:absolute;
-  inset:-40% -60%;
-  background: radial-gradient(closest-side, rgba(255,255,255,.18), transparent 65%);
-  transform: translateX(-10%);
-  pointer-events:none;
-  opacity:.45;
-  transition: opacity .35s ease;
-}
-#suit.range:hover::after{ opacity:.55; }
-
-/* Thumb bekommt leichte Suit-Tönung */
-#suit.range::-webkit-slider-thumb{
-  box-shadow:
-    0 10px 25px rgba(0,0,0,.25),
-    0 0 0 7px var(--suitGlow, rgba(122,167,255,.18));
-}
-#suit.range:active::-webkit-slider-thumb{
-  box-shadow:
-    0 10px 25px rgba(0,0,0,.25),
-    0 0 0 8px var(--suitGlow, rgba(83,240,181,.20));
-}
-#suit.range::-moz-range-thumb{
-  box-shadow:
-    0 10px 25px rgba(0,0,0,.25),
-    0 0 0 7px var(--suitGlow, rgba(122,167,255,.18));
-}
-#suit.range:active::-moz-range-thumb{
-  box-shadow:
-    0 10px 25px rgba(0,0,0,.25),
-    0 0 0 8px var(--suitGlow, rgba(83,240,181,.20));
-}
-
+    /* ===== Suit slider: always fully filled + color by suit (smooth) ===== */
+    #suit.range{
+      background:
+        linear-gradient(90deg,
+          var(--suitA, rgba(160,190,255,.92)),
+          var(--suitB, rgba(92,142,255,.78))
+        ),
+        linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,0));
+      background-blend-mode: overlay;
+      transition: filter .18s ease, background .35s ease;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.04) inset;
+    }
+    #suit.range::-webkit-slider-thumb{
+      box-shadow:
+        0 10px 25px rgba(0,0,0,.25),
+        0 0 0 7px var(--suitGlow, rgba(160,190,255,.24));
+    }
+    #suit.range:active::-webkit-slider-thumb{
+      box-shadow:
+        0 10px 25px rgba(0,0,0,.25),
+        0 0 0 8px var(--suitGlow, rgba(82,240,182,.24));
+    }
+    #suit.range::-moz-range-thumb{
+      box-shadow:
+        0 10px 25px rgba(0,0,0,.25),
+        0 0 0 7px var(--suitGlow, rgba(160,190,255,.24));
+    }
+    #suit.range:active::-moz-range-thumb{
+      box-shadow:
+        0 10px 25px rgba(0,0,0,.25),
+        0 0 0 8px var(--suitGlow, rgba(82,240,182,.24));
+    }
 
     .kv{ display:flex; justify-content:space-between; gap:10px; font-size:12px; color: var(--muted); margin-top:6px; }
 
@@ -332,8 +328,9 @@
       cursor:pointer;
       font-weight:950;
       letter-spacing:.2px;
-      transition: transform .08s ease, background .2s ease, box-shadow .2s ease;
+      transition: transform .08s ease, background .2s ease, box-shadow .2s ease, opacity .2s ease;
       font-size:13px;
+      touch-action: manipulation;
     }
     button:hover{
       background: rgba(255,255,255,.09);
@@ -352,6 +349,12 @@
         0 0 0 3px rgba(122,167,255,.10) inset;
     }
     button.ghost{ background: rgba(255,255,255,.03); }
+    button.danger{
+      background: rgba(255,92,122,.10);
+      border-color: rgba(255,92,122,.25);
+      color:#ffd6df;
+    }
+    button.danger:hover{ background: rgba(255,92,122,.14); }
     button:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
 
     .err{
@@ -399,6 +402,7 @@
       background: rgba(255,255,255,.04);
       font-weight:950; font-size:12px;
       margin-left:8px;
+      white-space:nowrap;
     }
     .tag.good{ color:var(--good); }
     .tag.warn{ color:var(--warn); }
@@ -474,7 +478,6 @@
       filter: drop-shadow(0 22px 40px rgba(0,0,0,.45));
     }
 
-    /* UX Add-ons */
     .chips{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
     .chip{
       padding:8px 10px;
@@ -602,7 +605,6 @@
       font-size:12px;
       margin-top:3px;
     }
-
     .miniCards{
       display:flex;
       gap:6px;
@@ -625,7 +627,6 @@
     }
     .mRed{ color:#ff6b8a; }
     .mWhite{ color:#e8eefc; }
-
     .modalNote{
       margin-top:10px;
       font-size:12px;
@@ -633,7 +634,6 @@
       line-height:1.35;
     }
 
-    /* Reduced motion */
     @media (prefers-reduced-motion: reduce){
       .panel, .slot.pulse, .err, .modalOverlay, .modal, .bar > div { animation:none !important; transition:none !important; }
       .floatCard{ display:none !important; }
@@ -644,7 +644,7 @@
 <body>
   <div class="wrap">
     <header>
-      <h1 class="title">Luis' Hold’em Helper</h1>
+      <h1 class="title">Hold’em Helper</h1>
       <div class="hdrRight">
         <button id="handsBtn" class="iconBtn" type="button" aria-haspopup="dialog" aria-controls="handsModal">
           Kombinationen
@@ -674,9 +674,6 @@
             <input id="opp" class="range" type="range" min="1" max="8" step="1" value="3" />
             <div class="muted" style="margin-top:6px;">Aktuell: <b id="oppVal">3</b></div>
 
-            
-          </div>
-
           <div style="margin-top:12px;">
             <div class="sectionLabel">Deine Karten</div>
             <div class="slots" id="heroSlots"></div>
@@ -703,14 +700,16 @@
           <div class="muted">Rang + Symbol → Übernehmen</div>
         </div>
         <div class="bd">
+          <div class="targetChip" id="targetChip">Ziel: <b id="targetChipVal">Hole 1</b></div>
+
           <div class="picker">
-            <div class="preview" id="preview">
+            <div class="preview" id="preview" title="Tippen = Übernehmen">
               <div class="cardFace" id="previewCard"></div>
             </div>
 
             <div>
               <label for="rank">Rang</label>
-              <input id="rank" class="range" type="range" min="0" max="12" step="1" value="6" />
+              <input id="rank" class="range" type="range" min="0" max="12" step="1" value="12" />
               <div class="kv"><span>2</span><span>A</span></div>
 
               <label for="suit">Symbol</label>
@@ -719,10 +718,11 @@
 
               <div class="btnRow">
                 <button id="commit" class="primary" type="button">Übernehmen</button>
+                <button id="clearSlotBtn" class="ghost" type="button">Slot leeren</button>
               </div>
 
               <div class="muted" style="margin-top:8px; line-height:1.35;">
-                Slot antippen zum Ersetzen. Nach „Übernehmen“ springt die App automatisch zum nächsten Slot.
+                Slot antippen zum Ersetzen. Preview antippen = sofort übernehmen.
               </div>
             </div>
           </div>
@@ -737,6 +737,8 @@
         </div>
         <div class="bd">
           <button id="calcBtn" class="primary bigCTA" type="button" disabled>Berechnen</button>
+          <button id="cancelBtn" class="danger bigCTA" type="button" style="display:none; margin-top:10px;">Abbrechen</button>
+
           <div class="ctaHint" id="ctaHint">Setze zuerst beide Hole Cards (und ggf. Board-Karten), dann wird „Berechnen“ aktiv.</div>
 
           <details>
@@ -786,16 +788,20 @@
               <div class="s" id="wtl">W/T/L: —</div>
               <div class="s" id="ci">—</div>
             </div>
+
             <div class="kpi">
-              <div class="k">Empfehlung</div>
-              <div class="v" id="advice">—</div>
-              <div class="s" id="adviceDetail">—</div>
+              <div class="k">Entscheidungs-Score</div>
+              <div class="v" id="decisionScore">—</div>
+              <div class="s" id="decisionLabel">—</div>
+              <div class="s" id="decisionWhy">—</div>
             </div>
+
             <div class="kpi">
               <div class="k">Details</div>
               <div class="v" id="details">—</div>
               <div class="s" id="details2">—</div>
             </div>
+
             <div class="kpi">
               <div class="k">Hinweis</div>
               <div class="s">
@@ -895,6 +901,38 @@
 
 <script>
 /* =========================
+   Persistence (LocalStorage)
+========================= */
+const STORAGE_KEY = 'holdem_helper_state_v4';
+let _saveQueued = false;
+function safeParseJSON(s){
+  try{ return JSON.parse(s); } catch{ return null; }
+}
+function saveStateDebounced(){
+  if (_saveQueued) return;
+  _saveQueued = true;
+  requestAnimationFrame(()=>{
+    _saveQueued = false;
+    const st = {
+      stage,
+      opp: Number(oppEl.value),
+      iters: Number(itersEl.value),
+      calcMode: String(calcModeEl.value),
+      pot: potEl.value,
+      call: callEl.value,
+      rank: Number(rankEl.value),
+      suit: Number(suitEl.value),
+    };
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(st)); } catch {}
+  });
+}
+function loadState(){
+  const st = safeParseJSON(localStorage.getItem(STORAGE_KEY) || '');
+  if (!st) return null;
+  return st;
+}
+
+/* =========================
    Deck / Card Mapping
 ========================= */
 const RANKS = '23456789TJQKA'.split('');
@@ -938,7 +976,27 @@ function cardHTML(id){
 function emptyHTML(){ return `<div class="emptyTxt">—</div>`; }
 
 /* =========================
-   7-card eval via 5-card combos (unchanged)
+   Stronger RNG (crypto fallback)
+========================= */
+function randUint32(){
+  if (globalThis.crypto && crypto.getRandomValues){
+    const a = new Uint32Array(1);
+    crypto.getRandomValues(a);
+    return a[0] >>> 0;
+  }
+  return (Math.random() * 0x100000000) >>> 0;
+}
+function randInt(max){
+  // unbiased rejection sampling
+  if (max <= 1) return 0;
+  const limit = Math.floor(0x100000000 / max) * max;
+  let x;
+  do { x = randUint32(); } while (x >= limit);
+  return x % max;
+}
+
+/* =========================
+   7-card eval via 5-card combos
 ========================= */
 const COMB_7C5 = [];
 for (let a=0; a<7; a++)
@@ -1007,7 +1065,7 @@ function eval7(ids7){
 }
 
 /* =========================
-   Equity Engine (unchanged)
+   Equity Engine + Cancel
 ========================= */
 function buildRemainingDeck(used){
   const deck=[];
@@ -1016,7 +1074,7 @@ function buildRemainingDeck(used){
 }
 function partialShuffle(deck, k){
   for (let i=0;i<k;i++){
-    const j = i + Math.floor(Math.random()*(deck.length - i));
+    const j = i + randInt(deck.length - i);
     [deck[i], deck[j]] = [deck[j], deck[i]];
   }
 }
@@ -1029,7 +1087,7 @@ function meanSeFromSums(sum, sumSq, n){
   return {mean, se};
 }
 
-async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
+async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress, shouldCancel){
   const known = boardKnown.slice();
   const missing = 5 - known.length;
   if (missing < 0 || missing > 2) throw new Error('Exact Heads-Up ist hier nur ab Flop (3 Boardkarten) sinnvoll.');
@@ -1041,6 +1099,8 @@ async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
   let win=0, tie=0, lose=0;
   let equitySum = 0;
 
+  const cancelCheck = () => { if (shouldCancel && shouldCancel()) throw new Error('CANCELLED'); };
+
   if (missing === 0){
     const board5 = known;
     const hv = eval7([hero2[0], hero2[1], board5[0], board5[1], board5[2], board5[3], board5[4]]);
@@ -1049,6 +1109,7 @@ async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
     let done = 0;
 
     for (let i=0;i<deck0.length;i++){
+      cancelCheck();
       for (let j=i+1;j<deck0.length;j++){
         const o1=deck0[i], o2=deck0[j];
         const ov = eval7([o1,o2, board5[0],board5[1],board5[2],board5[3],board5[4]]);
@@ -1067,6 +1128,7 @@ async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
   if (missing === 1){
     const totalRunouts = deck0.length;
     for (let r=0;r<deck0.length;r++){
+      cancelCheck();
       const river = deck0[r];
       const board5 = [...known, river];
       const hv = eval7([hero2[0], hero2[1], board5[0],board5[1],board5[2],board5[3],board5[4]]);
@@ -1095,6 +1157,7 @@ async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
     let donePairs = 0;
 
     for (let a=0;a<deck0.length;a++){
+      cancelCheck();
       for (let b=a+1;b<deck0.length;b++){
         const turn = deck0[a], river = deck0[b];
         const board5 = [...known, turn, river];
@@ -1135,7 +1198,7 @@ async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress){
   };
 }
 
-async function monteCarloEquityAdaptive(hero2, boardKnown, opponents, opts, onProgress){
+async function monteCarloEquityAdaptive(hero2, boardKnown, opponents, opts, onProgress, shouldCancel){
   const {minIters, maxIters, targetHalfWidth95} = opts;
 
   const used = new Set([...hero2, ...boardKnown]);
@@ -1151,9 +1214,11 @@ async function monteCarloEquityAdaptive(hero2, boardKnown, opponents, opts, onPr
   const boardFull = new Array(5);
   for (let i=0;i<boardKnown.length;i++) boardFull[i]=boardKnown[i];
 
-  const batch = 2500;
+  const batch = 2200;
+  const cancelCheck = () => { if (shouldCancel && shouldCancel()) throw new Error('CANCELLED'); };
 
   while (n < maxIters){
+    cancelCheck();
     const end = Math.min(maxIters, n + batch);
     for (; n < end; n++){
       partialShuffle(deck, need);
@@ -1228,7 +1293,7 @@ async function monteCarloEquityAdaptive(hero2, boardKnown, opponents, opts, onPr
 }
 
 /* =========================
-   NEW: Current Hand Name (static classification from known cards)
+   Current Hand Name
 ========================= */
 const CAT_DE = [
   'Hohe Karte',
@@ -1242,7 +1307,7 @@ const CAT_DE = [
   'Straight Flush'
 ];
 function getStraightHighFromPacked(packed20){
-  return (packed20 >>> 16) & 0xF; // first nibble
+  return (packed20 >>> 16) & 0xF;
 }
 function nameFromEval5Value(v){
   const cat = (v >>> 20) & 0xF;
@@ -1275,6 +1340,112 @@ function currentHandName(hero2, boardKnown){
 }
 
 /* =========================
+   Decision Score System (reworked)
+   - Preflop: Chen formula -> mapped to 0..100 (intuitive)
+   - Postflop: Equity (+ Pot Odds if provided) with conservative penalties
+========================= */
+function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
+function tanh(x){ return Math.tanh ? Math.tanh(x) : ((Math.exp(2*x)-1)/(Math.exp(2*x)+1)); }
+
+// Chen high-card base points
+function chenHighPoints(rank){
+  if (rank === 14) return 10; // A
+  if (rank === 13) return 8;  // K
+  if (rank === 12) return 7;  // Q
+  if (rank === 11) return 6;  // J
+  return rank / 2;            // 2..T
+}
+function chenValue(hero2){
+  const r1 = ID_RANK[hero2[0]];
+  const r2 = ID_RANK[hero2[1]];
+  const s1 = ID_SUIT[hero2[0]];
+  const s2 = ID_SUIT[hero2[1]];
+  const suited = (s1 === s2);
+
+  const hi = Math.max(r1,r2);
+  const lo = Math.min(r1,r2);
+  const isPair = (hi === lo);
+
+  let score = chenHighPoints(hi);
+
+  if (isPair){
+    score *= 2;
+    score = Math.max(score, 5); // minimum for pairs
+    return Math.ceil(score);
+  }
+
+  if (suited) score += 2;
+
+  const gap = hi - lo - 1; // A always high => A2 counts as 4+ gap
+  if (gap === 1) score -= 1;
+  else if (gap === 2) score -= 2;
+  else if (gap === 3) score -= 4;
+  else if (gap >= 4) score -= 5;
+
+  // straight bonus: connected/1-gap and Q-high or lower
+  if (hi <= 12 && gap <= 1) score += 1;
+
+  return Math.ceil(score); // round up half-points
+}
+
+function preflopDecisionScore(hero2, opponents){
+  const chen = chenValue(hero2);       // typically 0..20 (can be negative for trash)
+  const chenNorm = clamp(chen / 20, 0, 1);
+
+  // Nonlinear map so Premium hands "fühlen sich" premium an
+  let score = 100 * Math.pow(chenNorm, 0.78);
+
+  // Multiway -> etwas tighter (zieht Richtung 50)
+  const tightness = clamp(1 - 0.04 * (opponents - 1), 0.68, 1);
+  score = 50 + (score - 50) * tightness;
+
+  return { score: clamp(score, 0, 100), chen };
+}
+
+function decisionScoreFromEquity({equity, opponents, pot, call, half95}){
+  const hasPot = Number.isFinite(pot) && pot >= 0;
+  const hasCall = Number.isFinite(call) && call >= 0;
+  const hasOdds = hasPot && hasCall && (pot + call) > 0 && call > 0;
+
+  let basisText;
+  let score;
+
+  if (hasOdds){
+    const required = call / (pot + call);
+    const edge = equity - required;
+    basisText = `Pot Odds: benötigt ${(required*100).toFixed(1)}% · Edge ${(edge*100).toFixed(1)}%`;
+    score = 50 + 50 * tanh(edge / 0.08);
+  } else {
+    const baseline = 1 / (opponents + 1);
+    const edge = equity - baseline;
+    basisText = `Baseline ${(baseline*100).toFixed(1)}% · Vorteil ${(edge*100).toFixed(1)}%`;
+    score = 50 + 50 * tanh(edge / 0.12);
+  }
+
+  // etwas konservativer multiway
+  score -= Math.max(0, opponents - 1) * 1.2;
+
+  // Unsicherheit (CI) minimal abwerten
+  if (Number.isFinite(half95)){
+    score -= clamp(half95 * 100 * 0.22, 0, 7);
+  }
+
+  return { score: clamp(score, 0, 100), basisText };
+}
+
+function actionFromScore(score, stage){
+  // Preflop: Schwellen so gesetzt, dass solide Hände nicht "weggefaltet" werden
+  const t = (stage === 'pre')
+    ? {raise:76, play:54, meh:46}
+    : {raise:72, play:58, meh:48};
+
+  if (score >= t.raise) return {label:'RAISE / VALUE', tag:'good'};
+  if (score >= t.play)  return {label:'SPIELBAR', tag:'good'};
+  if (score >= t.meh)   return {label:'GRENZBEREICH', tag:'warn'};
+  return {label:'EHER FOLD', tag:'bad'};
+}
+
+/* =========================
    UI + App State
 ========================= */
 const deckLeftEl = document.getElementById('deckLeft');
@@ -1285,6 +1456,7 @@ const boardSlotsEl = document.getElementById('boardSlots');
 const boardAreaEl = document.getElementById('boardArea');
 
 const targetHint = document.getElementById('targetHint');
+const targetChipValEl = document.getElementById('targetChipVal');
 
 const rankEl = document.getElementById('rank');
 const suitEl = document.getElementById('suit');
@@ -1294,7 +1466,9 @@ const previewEl = document.getElementById('preview');
 const undoBtn = document.getElementById('undoBtn');
 const resetBtn = document.getElementById('resetBtn');
 const calcBtn = document.getElementById('calcBtn');
+const cancelBtn = document.getElementById('cancelBtn');
 const commitBtn = document.getElementById('commit');
+const clearSlotBtn = document.getElementById('clearSlotBtn');
 
 const statusText = document.getElementById('statusText');
 const barFill = document.getElementById('barFill');
@@ -1310,6 +1484,10 @@ const adviceDetailEl = document.getElementById('adviceDetail');
 const detailsEl = document.getElementById('details');
 const details2El = document.getElementById('details2');
 const modeHintEl = document.getElementById('modeHint');
+
+const decisionScoreEl = document.getElementById('decisionScore');
+const decisionLabelEl = document.getElementById('decisionLabel');
+const decisionWhyEl   = document.getElementById('decisionWhy');
 
 const oppEl = document.getElementById('opp');
 const oppValEl = document.getElementById('oppVal');
@@ -1327,6 +1505,10 @@ let hero = [null, null];
 let board = [null, null, null, null, null];
 let selected = {type:'hero', index:0};
 const history = [];
+
+// cancellation token
+let activeRunId = 0;
+let cancelRequested = false;
 
 function fmtPct(x,d=2){ return (x*100).toFixed(d) + ' %'; }
 function setStatus(text,p){
@@ -1369,8 +1551,11 @@ function nextEmptySlot(){
 }
 function setSelected(t,i, pulse=true){
   selected = {type:t, index:i};
-  targetHint.textContent = `Ziel: ${slotTitle(t,i)}`;
+  const title = slotTitle(t,i);
+  targetHint.textContent = `Ziel: ${title}`;
+  targetChipValEl.textContent = title;
   renderSlots(pulse);
+  saveStateDebounced();
 }
 function renderSlots(pulseSelected=false){
   heroSlotsEl.innerHTML = '';
@@ -1408,7 +1593,6 @@ function renderSlots(pulseSelected=false){
 
   updateCalcEnabled();
 }
-
 function getHero(){
   if (hero[0]===null || hero[1]===null) return null;
   return [hero[0], hero[1]];
@@ -1433,14 +1617,17 @@ function validateForCalcLite(){
   }
   return {ok:true, msg:'Bereit zum Berechnen.'};
 }
-
 function updateCalcEnabled(){
   const v = validateForCalcLite();
-  calcBtn.disabled = !v.ok;
+  calcBtn.disabled = !v.ok || isBusy();
   ctaHintEl.textContent = v.msg;
 }
 
-/* ===== NEW: slider progress fill helper ===== */
+function isBusy(){
+  return cancelBtn.style.display !== 'none';
+}
+
+/* ===== Range progress helper (NOT for suit slider) ===== */
 function setRangeProgress(el){
   const min = Number(el.min || 0);
   const max = Number(el.max || 100);
@@ -1450,57 +1637,62 @@ function setRangeProgress(el){
 }
 function wireRange(el){
   setRangeProgress(el);
-  el.addEventListener('input', ()=>setRangeProgress(el));
+  el.addEventListener('input', ()=>{
+    setRangeProgress(el);
+    saveStateDebounced();
+  });
 }
+
+/* ===== Suit track palette ===== */
 function setSuitTrack(){
   const s = Number(suitEl.value);
-
-  // Farbpalette näher am Symbol:
-  // ♠ kühl/steel-blue, ♥ ruby, ♦ amber-gold, ♣ emerald/teal
   const map = [
-    { a:'rgba(148,176,255,.92)', b:'rgba(90,132,255,.78)', glow:'rgba(148,176,255,.22)' }, // ♠
-    { a:'rgba(255,96,132,.92)',  b:'rgba(255,72,104,.80)', glow:'rgba(255,96,132,.22)' }, // ♥
-    { a:'rgba(255,198,92,.92)',  b:'rgba(255,140,60,.78)', glow:'rgba(255,198,92,.22)' }, // ♦
-    { a:'rgba(82,240,182,.86)',  b:'rgba(36,196,148,.78)', glow:'rgba(82,240,182,.22)' }, // ♣
+    { a:'rgba(160,190,255,.92)', b:'rgba(92,142,255,.78)', glow:'rgba(160,190,255,.24)' }, // ♠
+    { a:'rgba(255,92,126,.92)',  b:'rgba(255,70,102,.80)', glow:'rgba(255,92,126,.24)' }, // ♥
+    { a:'rgba(255,200,88,.92)',  b:'rgba(255,145,58,.78)', glow:'rgba(255,200,88,.24)' }, // ♦
+    { a:'rgba(82,240,182,.88)',  b:'rgba(34,198,148,.78)', glow:'rgba(82,240,182,.24)' }, // ♣
   ];
-
   const c = map[s] || map[0];
 
-  // smoother: wir "crossfaden" über CSS-Variablen + kurze filter Animation
   suitEl.style.setProperty('--suitA', c.a);
   suitEl.style.setProperty('--suitB', c.b);
   suitEl.style.setProperty('--suitGlow', c.glow);
 
-  // Mini-Impulse für weiches Feedback (ohne Layout-Jitter)
   suitEl.animate(
-    [{ filter:'brightness(1)' }, { filter:'brightness(1.08)' }, { filter:'brightness(1)' }],
+    [{ filter:'brightness(1)' }, { filter:'brightness(1.06)' }, { filter:'brightness(1)' }],
     { duration: 260, easing:'cubic-bezier(.2,.9,.2,1)' }
   );
 }
 
+/* ===== Stage switching (centralized) ===== */
+function applyStage(newStage, {fromInit=false} = {}){
+  stage = newStage;
 
-/* Stage buttons */
-document.querySelectorAll('.stageBtn').forEach(b=>{
-  b.addEventListener('click', ()=>{
-    document.querySelectorAll('.stageBtn').forEach(x=>x.classList.toggle('active', x===b));
-    stage = b.dataset.stage;
-
-    const max = boardMax();
-    for (let i=max;i<5;i++) board[i]=null;
-
-    for (let i=history.length-1;i>=0;i--){
-      const h = history[i];
-      if (h.type==='board' && (stage==='pre' || h.index>=max)) history.splice(i,1);
-    }
-    undoBtn.disabled = (history.length===0);
-
-    const n = nextEmptySlot() || {type:'hero', index:1};
-    setSelected(n.type, n.index, true);
-
-    clearErr();
-    resultEl.style.display = 'none';
-    renderSlots(true);
+  document.querySelectorAll('.stageBtn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.stage === stage);
   });
+
+  const max = boardMax();
+  for (let i=max;i<5;i++) board[i]=null;
+
+  for (let i=history.length-1;i>=0;i--){
+    const h = history[i];
+    if (h.type==='board' && (stage==='pre' || h.index>=max)) history.splice(i,1);
+  }
+  undoBtn.disabled = (history.length===0);
+
+  const n = nextEmptySlot() || {type:'hero', index:1};
+  setSelected(n.type, n.index, true);
+
+  clearErr();
+  resultEl.style.display = 'none';
+  renderSlots(true);
+  updateCalcEnabled();
+
+  if (!fromInit) saveStateDebounced();
+}
+document.querySelectorAll('.stageBtn').forEach(b=>{
+  b.addEventListener('click', ()=>applyStage(b.dataset.stage));
 });
 
 /* Opponents slider + chips */
@@ -1508,6 +1700,7 @@ oppEl.addEventListener('input', ()=>{
   oppValEl.textContent = oppEl.value;
   syncOppChips(Number(oppEl.value));
   renderSlots(false);
+  saveStateDebounced();
 });
 function syncOppChips(val){
   document.querySelectorAll('.chip[data-opp]').forEach(ch=>{
@@ -1522,6 +1715,7 @@ document.querySelectorAll('.chip[data-opp]').forEach(ch=>{
     syncOppChips(v);
     setRangeProgress(oppEl);
     renderSlots(true);
+    saveStateDebounced();
   });
 });
 
@@ -1531,13 +1725,14 @@ function updatePreview(){
   const s = Number(suitEl.value);
   previewCardEl.innerHTML = cardHTML(CODE_TO_ID[RANKS[r] + SUITS[s].c]);
 
-  setSuitTrack(); // <— NEU: Track-Farbe passend zum Symbol
+  setSuitTrack();
 
   previewEl.classList.add('bump');
   clearTimeout(updatePreview._t);
   updatePreview._t = setTimeout(()=>previewEl.classList.remove('bump'), 120);
-}
 
+  saveStateDebounced();
+}
 rankEl.addEventListener('input', updatePreview);
 suitEl.addEventListener('input', updatePreview);
 
@@ -1566,7 +1761,6 @@ async function animateToSlot(cardId, slotEl){
 
   float.remove();
 
-  // subtle "pop" feedback on target
   slotEl.animate(
     [{transform:'scale(1)'},{transform:'scale(1.05)'},{transform:'scale(1)'}],
     {duration: 240, easing:'cubic-bezier(.2,.9,.2,1)'}
@@ -1577,9 +1771,16 @@ function getCardIdFromPicker(){
   const s = Number(suitEl.value);
   return CODE_TO_ID[RANKS[r] + SUITS[s].c];
 }
+function slotValue(t,i){
+  return (t==='hero') ? hero[i] : board[i];
+}
+function setSlotValue(t,i,val){
+  if (t==='hero') hero[i]=val;
+  else board[i]=val;
+}
 
 /* Commit card */
-commitBtn.addEventListener('click', async ()=>{
+async function commitSelectedCard(){
   clearErr();
 
   let target = selected;
@@ -1598,7 +1799,7 @@ commitBtn.addEventListener('click', async ()=>{
 
   const id = getCardIdFromPicker();
   const used = usedSet();
-  const prev = (target.type==='hero') ? hero[target.index] : board[target.index];
+  const prev = slotValue(target.type, target.index);
   if (prev!==null) used.delete(prev);
 
   if (used.has(id)){
@@ -1612,8 +1813,7 @@ commitBtn.addEventListener('click', async ()=>{
 
   await animateToSlot(id, slotEl);
 
-  if (target.type==='hero') hero[target.index] = id;
-  else board[target.index] = id;
+  setSlotValue(target.type, target.index, id);
 
   history.push({type:target.type, index:target.index, prev, next:id});
   undoBtn.disabled = (history.length===0);
@@ -1624,6 +1824,27 @@ commitBtn.addEventListener('click', async ()=>{
 
   resultEl.style.display = 'none';
   updateCalcEnabled();
+  saveStateDebounced();
+}
+
+commitBtn.addEventListener('click', commitSelectedCard);
+previewEl.addEventListener('click', commitSelectedCard);
+
+clearSlotBtn.addEventListener('click', ()=>{
+  clearErr();
+  const prev = slotValue(selected.type, selected.index);
+  if (prev === null){
+    showErr('Slot ist bereits leer.');
+    return;
+  }
+  // clear must not violate duplicates (it can’t)
+  setSlotValue(selected.type, selected.index, null);
+  history.push({type:selected.type, index:selected.index, prev, next:null});
+  undoBtn.disabled = (history.length===0);
+  renderSlots(true);
+  resultEl.style.display = 'none';
+  updateCalcEnabled();
+  saveStateDebounced();
 });
 
 /* Undo / Reset */
@@ -1631,13 +1852,13 @@ undoBtn.addEventListener('click', ()=>{
   clearErr();
   const h = history.pop();
   if (!h) return;
-  if (h.type==='hero') hero[h.index] = h.prev;
-  else board[h.index] = h.prev;
+  setSlotValue(h.type, h.index, h.prev);
   undoBtn.disabled = (history.length===0);
   setSelected(h.type, h.index, true);
   renderSlots(true);
   resultEl.style.display = 'none';
   updateCalcEnabled();
+  saveStateDebounced();
 });
 resetBtn.addEventListener('click', ()=>{
   clearErr();
@@ -1650,32 +1871,35 @@ resetBtn.addEventListener('click', ()=>{
   setSelected('hero', 0, true);
   renderSlots(true);
   updateCalcEnabled();
+  saveStateDebounced();
 });
 
 /* Advanced */
 itersEl.addEventListener('input', ()=>{ itersValEl.textContent = itersEl.value; });
+calcModeEl.addEventListener('change', saveStateDebounced);
+potEl.addEventListener('input', saveStateDebounced);
+callEl.addEventListener('input', saveStateDebounced);
 
-/* Advice */
-function decideAdvice(equity, pot, call){
-  const eps=0.02;
-  const hasPot = Number.isFinite(pot) && pot>=0;
-  const hasCall = Number.isFinite(call) && call>=0;
-
-  if (!hasPot || !hasCall || (pot===0 && call===0)){
-    if (equity>=0.60) return {tag:'good', text:'Stark', detail:'Hohe Equity – tendenziell Value / Druck möglich.'};
-    if (equity>=0.48) return {tag:'warn', text:'Grenzbereich', detail:'Situationsabhängig (Position, Ranges, Implied Odds).'};
-    return {tag:'bad', text:'Schwach', detail:'Niedrige Equity – tendenziell eher folden ohne gute Gründe.'};
-  }
-  if (call<=0){
-    return {tag:'warn', text:'Kein Call', detail:'Wenn du nichts zahlen musst: Entscheidung hängt von Strategie ab.'};
-  }
-  const required = call / (pot + call);
-  const diff = equity - required;
-
-  if (diff>eps) return {tag:'good', text:'CALL (EV+)', detail:`Equity > benötigte Equity (${fmtPct(required,2)}).`};
-  if (diff>=-eps) return {tag:'warn', text:'Knapp', detail:`Nahe an der Pot-Odds-Schwelle (${fmtPct(required,2)}).`};
-  return {tag:'bad', text:'FOLD (EV−)', detail:`Equity < benötigte Equity (${fmtPct(required,2)}).`};
+/* Cancel handling */
+function beginRun(){
+  cancelRequested = false;
+  cancelBtn.style.display = '';
+  cancelBtn.disabled = false;
+  return ++activeRunId; // EINZIGE Stelle, die activeRunId erhöht
 }
+function endRun(){
+  cancelBtn.style.display = 'none';
+  cancelBtn.disabled = true;
+  cancelRequested = false;
+}
+function shouldCancel(runId){
+  return cancelRequested || runId !== activeRunId;
+}
+cancelBtn.addEventListener('click', ()=>{
+  cancelRequested = true;
+  cancelBtn.disabled = true;
+  setStatus('Abbrechen…', barFill.style.width ? parseFloat(barFill.style.width)/100 : 0);
+});
 
 /* Calc */
 function validateForCalc(){
@@ -1684,12 +1908,19 @@ function validateForCalc(){
     showErr(v.msg);
     return false;
   }
+  // additional sanity for pot/call
+  const pot = (potEl.value==='') ? NaN : Number(potEl.value);
+  const call = (callEl.value==='') ? NaN : Number(callEl.value);
+  if (Number.isFinite(pot) && pot < 0) { showErr('Pot darf nicht negativ sein.'); return false; }
+  if (Number.isFinite(call) && call < 0) { showErr('Call darf nicht negativ sein.'); return false; }
   return true;
 }
 
 calcBtn.addEventListener('click', async ()=>{
   clearErr();
   if (!validateForCalc()) return;
+
+  const runId = beginRun();
 
   const opponents = Number(oppEl.value);
   const maxIters = Number(itersEl.value);
@@ -1706,6 +1937,8 @@ calcBtn.addEventListener('click', async ()=>{
 
   if (mode==='exact' && !exactEligible){
     showErr('Exakt ist nur möglich bei Heads-Up (1 Gegner) und mindestens Flop (3 Boardkarten).');
+    endRun();
+    updateCalcEnabled();
     return;
   }
 
@@ -1713,34 +1946,43 @@ calcBtn.addEventListener('click', async ()=>{
   resetBtn.disabled = true;
   undoBtn.disabled = true;
   commitBtn.disabled = true;
+  clearSlotBtn.disabled = true;
 
   setStatus('Rechnet…', 0.06);
   resultEl.style.display = 'none';
 
   try{
     let equity, winProb, tieProb, loseProb, ciText, details2;
+    let mcHalf95 = NaN;
 
     if (mode === 'exact'){
       setStatus('Exakt (Heads-Up)…', 0.10);
-      const res = await exactHeadsUpFromFlop(h, boardKnown, (p)=>setStatus('Exakt (Heads-Up)…', p));
+      const res = await exactHeadsUpFromFlop(
+        h, boardKnown,
+        (p)=>setStatus('Exakt (Heads-Up)…', p),
+        ()=>shouldCancel(runId)
+      );
       equity = res.equity;
       winProb = res.winProb; tieProb = res.tieProb; loseProb = res.loseProb;
       ciText = `Exakt berechnet (States: ${res.states.toLocaleString('de-DE')}).`;
       details2 = `${stage.toUpperCase()} · Gegnerhände: zufällig · exakt`;
       setStatus('Fertig (exakt).', 1);
     } else {
-      const targetHalf = 0.010;   // 1.0% @95%
-      const minIters = 20000;
+      // Preflop etwas höhere Varianz -> geringfügig großzügigerer CI-Target
+      const targetHalf = (stage === 'pre') ? 0.012 : 0.010; // 1.2% / 1.0% @95%
+      const minIters = (stage === 'pre') ? 30000 : 20000;
 
       setStatus('Monte-Carlo…', 0.10);
       const res = await monteCarloEquityAdaptive(
         h, boardKnown, opponents,
         { minIters: Math.min(minIters, maxIters), maxIters, targetHalfWidth95: targetHalf },
-        (p)=>setStatus('Monte-Carlo…', p)
+        (p)=>setStatus('Monte-Carlo…', p),
+        ()=>shouldCancel(runId)
       );
 
       equity = res.equity;
       winProb = res.winProb; tieProb = res.tieProb; loseProb = res.loseProb;
+      mcHalf95 = res.half95;
 
       const half = res.half95 ?? (1.96*res.se);
       ciText = `≈ 95% CI: ${fmtPct(Math.max(0, equity-half),2)} bis ${fmtPct(Math.min(1, equity+half),2)} · Iter: ${res.iters.toLocaleString('de-DE')}`;
@@ -1748,23 +1990,57 @@ calcBtn.addEventListener('click', async ()=>{
       setStatus('Fertig (MC).', 1);
     }
 
-    const score = Math.max(1, Math.min(100, Math.round(equity*100)));
-    const pot = (potEl.value==='') ? NaN : Number(potEl.value);
-    const call = (callEl.value==='') ? NaN : Number(callEl.value);
-    const adv = decideAdvice(equity, pot, call);
+    if (shouldCancel(runId)) throw new Error('CANCELLED');
 
+    // Equity score (Anzeige)
+    const eqScore = Math.max(1, Math.min(100, Math.round(equity*100)));
     equityEl.textContent = fmtPct(equity,2);
-    equityMetaEl.textContent = `Score: ${score} / 100`;
+    equityMetaEl.textContent = `Score: ${eqScore} / 100`;
 
-    // NEW: current hand name from known cards
+    // Hand name
     const nowHand = currentHandName(h, boardKnown);
     handNowEl.textContent = `Aktuelle Kombination: ${nowHand}`;
 
     wtlEl.textContent = `W/T/L: ${fmtPct(winProb,1)} / ${fmtPct(tieProb,1)} / ${fmtPct(loseProb,1)}`;
     ciEl.textContent = ciText;
 
-    adviceEl.innerHTML = `${adv.text} <span class="tag ${adv.tag}">${adv.tag.toUpperCase()}</span>`;
-    adviceDetailEl.textContent = adv.detail;
+    // Decision score
+    const pot = (potEl.value==='') ? NaN : Number(potEl.value);
+    const call = (callEl.value==='') ? NaN : Number(callEl.value);
+
+    let decScore, why;
+    if (stage === 'pre'){
+      const out = preflopDecisionScore(h, opponents);
+      decScore = out.score;
+      why = `Preflop (Chen: ${out.chen}/20) · angepasst für ${opponents} Gegner`;
+    } else {
+      const out = decisionScoreFromEquity({ equity, opponents, pot, call, half95: (mode==='mc' ? mcHalf95 : NaN) });
+      decScore = out.score;
+      why = out.basisText;
+    }
+
+    const act = actionFromScore(decScore, stage);
+
+    decisionScoreEl.textContent = `${Math.round(decScore)}/100`;
+    decisionLabelEl.innerHTML = `<span class="tag ${act.tag}">${act.label}</span>`;
+    decisionWhyEl.textContent = why;
+
+    // Empfehlung konsistent
+    adviceEl.innerHTML = `${act.label} <span class="tag ${act.tag}">${act.tag.toUpperCase()}</span>`;
+
+    if (stage === 'pre'){
+      adviceDetailEl.textContent =
+        decScore >= 54
+          ? 'Preflop solide – tendenziell spielen (Position/Action beachten).'
+          : (decScore >= 46
+              ? 'Grenzbereich – eher nur in günstigen Spots.'
+              : 'Eher fold – außer spezielle Reads/Situation.');
+    } else {
+      const hasOdds = Number.isFinite(pot) && Number.isFinite(call) && call>0 && (pot+call)>0;
+      adviceDetailEl.textContent = hasOdds
+        ? 'Postflop: Pot Odds/Edge + Equity (multiway konservativ).'
+        : 'Postflop: Equity-Vorteil vs. Multiway-Baseline.';
+    }
 
     const modeTxt = (mode==='exact') ? 'Exakt' : `Monte-Carlo (Max ${maxIters.toLocaleString('de-DE')})`;
     detailsEl.textContent = `${modeTxt} · Gegner: ${opponents}`;
@@ -1773,12 +2049,21 @@ calcBtn.addEventListener('click', async ()=>{
     resultEl.style.display = 'grid';
     resultsPanel.scrollIntoView({behavior:'smooth', block:'start'});
   } catch(e){
-    showErr('Fehler bei der Berechnung: ' + (e && e.message ? e.message : String(e)));
+    if (e && e.message === 'CANCELLED'){
+      // clean cancel
+      showErr('Berechnung abgebrochen.');
+      setStatus('Abgebrochen.', 0);
+    } else {
+      showErr('Fehler bei der Berechnung: ' + (e && e.message ? e.message : String(e)));
+    }
   } finally {
+    endRun();
     calcBtn.disabled = !validateForCalcLite().ok;
     resetBtn.disabled = false;
     undoBtn.disabled = (history.length===0);
     commitBtn.disabled = false;
+    clearSlotBtn.disabled = false;
+    updateCalcEnabled();
   }
 });
 
@@ -1811,21 +2096,42 @@ handsClose.addEventListener('click', closeHands);
 handsModal.addEventListener('click', (e)=>{ if (e.target === handsModal) closeHands(); });
 document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape' && handsModal.style.display === 'flex') closeHands(); });
 
-/* Init */
+/* =========================
+   Init
+========================= */
 function init(){
+  // wire range progress fills (exclude suit)
+  [oppEl, rankEl, itersEl].forEach(wireRange);
+
+  // load persisted settings
+  const st = loadState();
+  if (st){
+    if (st.opp) { oppEl.value = String(clamp(Number(st.opp),1,8)); }
+    if (st.iters) { itersEl.value = String(clamp(Number(st.iters),10000,250000)); }
+    if (typeof st.calcMode === 'string') calcModeEl.value = st.calcMode;
+    if (typeof st.pot === 'string') potEl.value = st.pot;
+    if (typeof st.call === 'string') callEl.value = st.call;
+    if (Number.isFinite(st.rank)) rankEl.value = String(clamp(Number(st.rank),0,12));
+    if (Number.isFinite(st.suit)) suitEl.value = String(clamp(Number(st.suit),0,3));
+    if (typeof st.stage === 'string' && ['pre','flop','turn','river'].includes(st.stage)) stage = st.stage;
+  }
+
   oppValEl.textContent = oppEl.value;
   itersValEl.textContent = itersEl.value;
   undoBtn.disabled = true;
 
-  // wire range progress fills
-  [oppEl, rankEl, itersEl].forEach(wireRange);
-
+  setSuitTrack();
   updatePreview();
+
   syncOppChips(Number(oppEl.value));
-  setSelected('hero', 0, true);
+  applyStage(stage, {fromInit:true});
   setStatus('Bereit.', 0);
   renderSlots(true);
   updateCalcEnabled();
+
+  // ensure target chip sync
+  setSelected('hero', 0, true);
+  saveStateDebounced();
 }
 init();
 </script>
