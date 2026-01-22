@@ -4,9 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
-	<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-	<meta name="color-scheme" content="dark light
-	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="color-scheme" content="dark light">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Luis' Hold’em Helper</title>
   <style>
     :root{
@@ -42,6 +42,13 @@
       -webkit-background-clip:text; background-clip:text; color:transparent;
       text-shadow: 0 0 24px rgba(122,167,255,.12);
     }
+    .subtitle{
+      margin:0;
+      font-size:12.5px;
+      color: var(--muted);
+      font-weight:900;
+      letter-spacing:.2px;
+    }
     .hdrRight{
       display:flex; align-items:center; gap:10px; flex-wrap:wrap;
       justify-content:flex-end;
@@ -72,6 +79,10 @@
       box-shadow: 0 0 0 3px rgba(122,167,255,.10) inset;
     }
     .iconBtn:active{ transform: translateY(1px) scale(.99); }
+    .iconBtn:focus-visible{
+      outline: 2px solid rgba(122,167,255,.65);
+      outline-offset: 2px;
+    }
 
     .grid{ display:grid; grid-template-columns:1fr; gap:12px; }
     .panel{
@@ -129,6 +140,22 @@
 
     .sectionLabel{ font-size:12px; color:var(--muted); font-weight:900; margin:0 0 8px 2px; }
     .slots{ display:flex; gap:10px; flex-wrap:wrap; }
+    .panelNote{
+      margin-top:10px;
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.4;
+    }
+    .callout{
+      border:1px solid rgba(122,167,255,.25);
+      background: rgba(122,167,255,.08);
+      border-radius: 14px;
+      padding:10px 12px;
+      font-size:12px;
+      color: var(--text);
+      font-weight:800;
+      line-height:1.4;
+    }
 
     .slot{
       width:72px; height:92px;
@@ -145,6 +172,10 @@
       box-shadow: 0 0 0 2px rgba(255,255,255,.05) inset;
     }
     .slot:active{ transform: translateY(1px) scale(.99); }
+    .slot:focus-visible{
+      outline: 2px solid rgba(122,167,255,.7);
+      outline-offset: 2px;
+    }
     .slot.sel{
       border-color: rgba(122,167,255,.65);
       box-shadow:
@@ -340,6 +371,10 @@
       box-shadow: 0 0 0 3px rgba(255,255,255,.04) inset;
     }
     button:active{ transform: translateY(1px) scale(.99); }
+    button:focus-visible{
+      outline: 2px solid rgba(122,167,255,.65);
+      outline-offset: 2px;
+    }
     button.primary{
       background: linear-gradient(135deg, rgba(122,167,255,.92), rgba(83,240,181,.72));
       color:#081124;
@@ -477,6 +512,7 @@
     /* UX Add-ons */
     .chips{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
     .chip{
+      appearance:none;
       padding:8px 10px;
       border-radius:999px;
       border:1px solid var(--line);
@@ -485,6 +521,7 @@
       font-weight:950;
       font-size:12px;
       transition: background .2s ease, transform .08s ease, border-color .2s ease;
+      cursor:pointer;
     }
     .chip:hover{ transform: translateY(-1px); border-color: rgba(122,167,255,.25); }
     .chip.active{
@@ -492,6 +529,10 @@
       color: var(--text);
       border-color: rgba(122,167,255,.35);
       box-shadow: 0 0 0 3px rgba(122,167,255,.10) inset;
+    }
+    .chip:focus-visible{
+      outline: 2px solid rgba(122,167,255,.6);
+      outline-offset: 2px;
     }
     .bigCTA{
       width:100%;
@@ -504,6 +545,20 @@
       font-size:12px;
       color: var(--muted);
       line-height:1.35;
+    }
+    .previewLabel{
+      margin-top:10px;
+      font-size:12px;
+      color: var(--muted);
+      font-weight:900;
+    }
+    .resultEmpty{
+      border:1px dashed rgba(255,255,255,.2);
+      border-radius: 14px;
+      padding:12px;
+      font-size:12.5px;
+      color: var(--muted);
+      line-height:1.45;
     }
 
     /* ===== Hand-Rankings Modal ===== */
@@ -644,7 +699,10 @@
 <body>
   <div class="wrap">
     <header>
-      <h1 class="title">Luis' Hold’em Helper</h1>
+      <div>
+        <h1 class="title">Luis' Hold’em Helper</h1>
+        <p class="subtitle">Schnelle Equity-Schätzung, klare Entscheidungen, modern aufbereitet.</p>
+      </div>
       <div class="hdrRight">
         <button id="handsBtn" class="iconBtn" type="button" aria-haspopup="dialog" aria-controls="handsModal">
           Kombinationen
@@ -673,8 +731,16 @@
             <label for="opp" style="margin-top:0;">Gegner (Anzahl)</label>
             <input id="opp" class="range" type="range" min="1" max="8" step="1" value="3" />
             <div class="muted" style="margin-top:6px;">Aktuell: <b id="oppVal">3</b></div>
-
-            
+            <div class="chips" aria-label="Schnellwahl Gegner">
+              <button class="chip" data-opp="1" type="button">1 · Heads-Up</button>
+              <button class="chip" data-opp="2" type="button">2</button>
+              <button class="chip" data-opp="3" type="button">3</button>
+              <button class="chip" data-opp="4" type="button">4</button>
+              <button class="chip" data-opp="5" type="button">5</button>
+              <button class="chip" data-opp="6" type="button">6</button>
+              <button class="chip" data-opp="7" type="button">7</button>
+              <button class="chip" data-opp="8" type="button">8</button>
+            </div>
           </div>
 
           <div style="margin-top:12px;">
@@ -687,12 +753,16 @@
             <div class="slots" id="boardSlots"></div>
           </div>
 
+          <div class="callout" style="margin-top:12px;">
+            Quick-Guide: Wähle Stage → setze 2 Hole Cards → (ab Flop) Board setzen → berechnen.
+          </div>
+
           <div class="btnRow">
             <button id="undoBtn" class="ghost" type="button">Undo</button>
             <button id="resetBtn" class="ghost" type="button">Reset</button>
           </div>
 
-          <div id="err" class="err"></div>
+          <div id="err" class="err" role="alert" aria-live="polite"></div>
         </div>
       </section>
 
@@ -720,6 +790,8 @@
               <div class="btnRow">
                 <button id="commit" class="primary" type="button">Übernehmen</button>
               </div>
+
+              <div class="previewLabel" id="previewLabel">Auswahl: —</div>
 
               <div class="muted" style="margin-top:8px; line-height:1.35;">
                 Slot antippen zum Ersetzen. Nach „Übernehmen“ springt die App automatisch zum nächsten Slot.
@@ -777,6 +849,9 @@
           <div class="muted">Equity / W-T-L / Empfehlung</div>
         </div>
         <div class="bd">
+          <div class="resultEmpty" id="resultEmpty">
+            Noch keine Berechnung. Wenn du bereit bist, klick auf „Berechnen“ – die Ergebnisse erscheinen hier.
+          </div>
           <div class="resultGrid" id="result" style="display:none;">
             <div class="kpi">
               <div class="k">Equity</div>
@@ -811,7 +886,7 @@
 
   <div class="bottomBar">
     <div class="bottomWrap">
-      <div class="statusTxt" id="statusText">Bereit.</div>
+      <div class="statusTxt" id="statusText" aria-live="polite">Bereit.</div>
       <div class="bar" aria-label="Fortschritt"><div id="barFill"></div></div>
     </div>
   </div>
@@ -934,6 +1009,13 @@ function cardHTML(id){
       <div class="mini2">${r}<span class="${cls}">${suit.sym}</span></div>
     </div>
   `;
+}
+function cardLabel(id){
+  const code = CARD_IDS[id];
+  const r = code[0] === 'T' ? '10' : code[0];
+  const s = code[1];
+  const suit = SUITS.find(x=>x.c===s);
+  return `${r}${suit.sym}`;
 }
 function emptyHTML(){ return `<div class="emptyTxt">—</div>`; }
 
@@ -1290,6 +1372,7 @@ const rankEl = document.getElementById('rank');
 const suitEl = document.getElementById('suit');
 const previewCardEl = document.getElementById('previewCard');
 const previewEl = document.getElementById('preview');
+const previewLabelEl = document.getElementById('previewLabel');
 
 const undoBtn = document.getElementById('undoBtn');
 const resetBtn = document.getElementById('resetBtn');
@@ -1300,6 +1383,7 @@ const statusText = document.getElementById('statusText');
 const barFill = document.getElementById('barFill');
 
 const resultEl = document.getElementById('result');
+const resultEmptyEl = document.getElementById('resultEmpty');
 const equityEl = document.getElementById('equity');
 const equityMetaEl = document.getElementById('equityMeta');
 const handNowEl = document.getElementById('handNow');
@@ -1332,6 +1416,10 @@ function fmtPct(x,d=2){ return (x*100).toFixed(d) + ' %'; }
 function setStatus(text,p){
   statusText.textContent = text;
   barFill.style.width = (p*100).toFixed(1)+'%';
+}
+function setResultVisible(visible){
+  resultEl.style.display = visible ? 'grid' : 'none';
+  if (resultEmptyEl) resultEmptyEl.style.display = visible ? 'none' : 'block';
 }
 function showErr(msg){
   errEl.style.display = 'block';
@@ -1380,7 +1468,17 @@ function renderSlots(pulseSelected=false){
     el.className = 'slot' + (isSel ? ' sel' : '') + (isSel && pulseSelected ? ' pulse' : '');
     el.dataset.type='hero'; el.dataset.index=String(i);
     el.innerHTML = (hero[i]===null) ? emptyHTML() : cardHTML(hero[i]);
+    el.setAttribute('role', 'button');
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('aria-pressed', isSel ? 'true' : 'false');
+    el.setAttribute('aria-label', `${slotTitle('hero', i)}: ${hero[i]===null ? 'leer' : cardLabel(hero[i])}`);
     el.addEventListener('click', ()=>setSelected('hero', i, true));
+    el.addEventListener('keydown', (e)=>{
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        setSelected('hero', i, true);
+      }
+    });
     heroSlotsEl.appendChild(el);
   }
 
@@ -1392,7 +1490,17 @@ function renderSlots(pulseSelected=false){
     el.className = 'slot' + (isSel ? ' sel' : '') + (isSel && pulseSelected ? ' pulse' : '');
     el.dataset.type='board'; el.dataset.index=String(i);
     el.innerHTML = (board[i]===null) ? emptyHTML() : cardHTML(board[i]);
+    el.setAttribute('role', 'button');
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('aria-pressed', isSel ? 'true' : 'false');
+    el.setAttribute('aria-label', `${slotTitle('board', i)}: ${board[i]===null ? 'leer' : cardLabel(board[i])}`);
     el.addEventListener('click', ()=>setSelected('board', i, true));
+    el.addEventListener('keydown', (e)=>{
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        setSelected('board', i, true);
+      }
+    });
     boardSlotsEl.appendChild(el);
   }
 
@@ -1498,7 +1606,7 @@ document.querySelectorAll('.stageBtn').forEach(b=>{
     setSelected(n.type, n.index, true);
 
     clearErr();
-    resultEl.style.display = 'none';
+    setResultVisible(false);
     renderSlots(true);
   });
 });
@@ -1530,6 +1638,10 @@ function updatePreview(){
   const r = Number(rankEl.value);
   const s = Number(suitEl.value);
   previewCardEl.innerHTML = cardHTML(CODE_TO_ID[RANKS[r] + SUITS[s].c]);
+  if (previewLabelEl){
+    const rankTxt = RANKS[r] === 'T' ? '10' : RANKS[r];
+    previewLabelEl.textContent = `Auswahl: ${rankTxt}${SUITS[s].sym}`;
+  }
 
   setSuitTrack(); // <— NEU: Track-Farbe passend zum Symbol
 
@@ -1622,7 +1734,7 @@ commitBtn.addEventListener('click', async ()=>{
   if (n) setSelected(n.type, n.index, true);
   else renderSlots(false);
 
-  resultEl.style.display = 'none';
+  setResultVisible(false);
   updateCalcEnabled();
 });
 
@@ -1636,7 +1748,7 @@ undoBtn.addEventListener('click', ()=>{
   undoBtn.disabled = (history.length===0);
   setSelected(h.type, h.index, true);
   renderSlots(true);
-  resultEl.style.display = 'none';
+  setResultVisible(false);
   updateCalcEnabled();
 });
 resetBtn.addEventListener('click', ()=>{
@@ -1645,7 +1757,7 @@ resetBtn.addEventListener('click', ()=>{
   board = [null,null,null,null,null];
   history.length = 0;
   undoBtn.disabled = true;
-  resultEl.style.display = 'none';
+  setResultVisible(false);
   setStatus('Bereit.', 0);
   setSelected('hero', 0, true);
   renderSlots(true);
@@ -1715,7 +1827,7 @@ calcBtn.addEventListener('click', async ()=>{
   commitBtn.disabled = true;
 
   setStatus('Rechnet…', 0.06);
-  resultEl.style.display = 'none';
+  setResultVisible(false);
 
   try{
     let equity, winProb, tieProb, loseProb, ciText, details2;
@@ -1770,7 +1882,7 @@ calcBtn.addEventListener('click', async ()=>{
     detailsEl.textContent = `${modeTxt} · Gegner: ${opponents}`;
     details2El.textContent = details2;
 
-    resultEl.style.display = 'grid';
+    setResultVisible(true);
     resultsPanel.scrollIntoView({behavior:'smooth', block:'start'});
   } catch(e){
     showErr('Fehler bei der Berechnung: ' + (e && e.message ? e.message : String(e)));
@@ -1824,6 +1936,7 @@ function init(){
   syncOppChips(Number(oppEl.value));
   setSelected('hero', 0, true);
   setStatus('Bereit.', 0);
+  setResultVisible(false);
   renderSlots(true);
   updateCalcEnabled();
 }
