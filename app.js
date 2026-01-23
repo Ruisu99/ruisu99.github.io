@@ -1265,9 +1265,19 @@ function init(){
   itersValEl.textContent = itersEl.value;
   undoBtn.disabled = true;
 
-  initWheel();
+   initWheel();
+
+  const setupMore = document.getElementById('setupMore');
+  if (setupMore){
+    const mq = window.matchMedia('(min-width: 901px)');
+    const sync = ()=>{ setupMore.open = mq.matches; };
+    sync();
+    if (mq.addEventListener) mq.addEventListener('change', sync);
+    else mq.addListener(sync);
+  }
 
   requestAnimationFrame(()=>{
+
     scrollWheelToIndex(rankWheelEl, rankIdx, false);
     scrollWheelToIndex(suitWheelEl, suitIdx, false);
     setActiveWheelItem(rankWheelEl, rankIdx);
