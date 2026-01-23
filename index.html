@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover" />
-  <title>Hold’em Helper</title>
+  <title>Luis' Hold’em Helper</title>
 
   <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
@@ -24,109 +24,120 @@
       </div>
     </header>
 
-    <!-- ===== Desktop: 2 oben (Setup/Picker) + 1 unten full width (Compute) ===== -->
     <div class="layout">
 
-      <!-- ========== OBEN LINKS: Setup (Kartenanzeige + Gegnerauswahl) ========== -->
-      <section class="panel area-setup" id="panelSetup">
+      <!-- ====== KOMBINIERTER BEREICH: Anzeige + Auswahl (1+2) ====== -->
+      <section class="panel area-cards" id="panelCards">
         <div class="hd">
-          <div class="ttl">
-            <span class="stepBadge"><b>1</b> Setup</span>
-          </div>
+          <div class="ttl"><span class="stepBadge"><b>1–2</b> Karten</span></div>
           <div class="muted" id="targetHint">Ziel: Hole 1</div>
         </div>
 
         <div class="bd">
-          <div class="stack">
+          <div class="cardsGrid">
 
-            <div class="seg" role="tablist" aria-label="Stage">
-              <button class="stageBtn active" data-stage="pre" type="button">Pre-Flop</button>
-              <button class="stageBtn" data-stage="flop" type="button">Flop</button>
-              <button class="stageBtn" data-stage="turn" type="button">Turn</button>
-              <button class="stageBtn" data-stage="river" type="button">River</button>
-            </div>
-
-            <div>
-              <label for="opp" style="margin-top:0;">Gegner (Anzahl)</label>
-              <input id="opp" class="range" type="range" min="1" max="8" step="1" value="3" />
-              <div class="muted" style="margin-top:6px;">Aktuell: <b id="oppVal">3</b></div>
-            </div>
-
-            <div>
-              <div class="sectionLabel">Deine Karten</div>
-              <div class="slots" id="heroSlots"></div>
-            </div>
-
-            <div id="boardArea" style="display:none;">
-              <div class="sectionLabel">Board</div>
-              <div class="slots" id="boardSlots"></div>
-            </div>
-
-            <div class="btnRow">
-              <button id="undoBtn" class="ghost" type="button">Undo</button>
-              <button id="resetBtn" class="ghost" type="button">Reset</button>
-            </div>
-
-            <div id="err" class="err"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ========== OBEN RECHTS: Wheel Picker ========== -->
-      <section class="panel area-picker" id="panelPicker">
-        <div class="hd">
-          <div class="ttl"><span class="stepBadge"><b>2</b> Karte wählen</span></div>
-          <div class="muted">Wheel → Übernehmen</div>
-        </div>
-
-        <div class="bd">
-          <div class="stack">
-            <div class="targetChip" id="targetChip">
-              Ziel: <b id="targetChipVal">Hole 1</b>
-            </div>
-
-            <div class="pickerLayout">
-              <div class="preview" id="preview" title="Tippen = Übernehmen">
-                <div class="cardFace" id="previewCard"></div>
+            <!-- Links: Setup + Slots -->
+            <div class="subCard">
+              <div class="subHd">
+                <div class="ttl">Anzeige</div>
+                <div class="muted">Stage · Gegner · Slots</div>
               </div>
 
-              <div class="wheelWrap">
-                <div class="wheelBox">
-                  <div class="wheelLabel">Rang</div>
-                  <div class="wheelFrame">
-                    <div class="wheel" id="rankWheel" aria-label="Rang"></div>
-                    <div class="wheelCenter" aria-hidden="true"></div>
-                    <div class="wheelFadeTop" aria-hidden="true"></div>
-                    <div class="wheelFadeBot" aria-hidden="true"></div>
-                  </div>
-                </div>
+              <div class="subBd">
+                <div class="stack">
 
-                <div class="wheelBox">
-                  <div class="wheelLabel">Symbol</div>
-                  <div class="wheelFrame">
-                    <div class="wheel" id="suitWheel" aria-label="Symbol"></div>
-                    <div class="wheelCenter" aria-hidden="true"></div>
-                    <div class="wheelFadeTop" aria-hidden="true"></div>
-                    <div class="wheelFadeBot" aria-hidden="true"></div>
+                  <div class="seg" role="tablist" aria-label="Stage">
+                    <button class="stageBtn active" data-stage="pre" type="button">Pre-Flop</button>
+                    <button class="stageBtn" data-stage="flop" type="button">Flop</button>
+                    <button class="stageBtn" data-stage="turn" type="button">Turn</button>
+                    <button class="stageBtn" data-stage="river" type="button">River</button>
+                  </div>
+
+                  <div>
+                    <label for="opp" style="margin-top:0;">Gegner (Anzahl)</label>
+                    <input id="opp" class="range" type="range" min="1" max="8" step="1" value="3" />
+                    <div class="muted" style="margin-top:6px;">Aktuell: <b id="oppVal">3</b></div>
+                  </div>
+
+                  <div>
+                    <div class="sectionLabel">Deine Karten</div>
+                    <div class="slots" id="heroSlots"></div>
+                  </div>
+
+                  <div id="boardArea" style="display:none;">
+                    <div class="sectionLabel">Board</div>
+                    <div class="slots" id="boardSlots"></div>
+                  </div>
+
+                  <div class="btnRow">
+                    <button id="undoBtn" class="ghost" type="button">Undo</button>
+                    <button id="resetBtn" class="ghost" type="button">Reset</button>
+                  </div>
+
+                  <div id="err" class="err"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rechts: Wheel Picker + Preview -->
+            <div class="subCard">
+              <div class="subHd">
+                <div class="ttl">Auswahl</div>
+                <div class="muted">Wheel · Preview · Übernehmen</div>
+              </div>
+
+              <div class="subBd">
+                <div class="stack">
+
+                  <div class="targetChip" id="targetChip">
+                    Ziel: <b id="targetChipVal">Hole 1</b>
+                  </div>
+
+                  <div class="pickerLayout">
+                    <div class="preview" id="preview" title="Tippen = Übernehmen">
+                      <div class="cardFace" id="previewCard"></div>
+                    </div>
+
+                    <div class="wheelWrap">
+                      <div class="wheelBox">
+                        <div class="wheelLabel">Rang</div>
+                        <div class="wheelFrame">
+                          <div class="wheel" id="rankWheel" aria-label="Rang"></div>
+                          <div class="wheelCenter" aria-hidden="true"></div>
+                          <div class="wheelFadeTop" aria-hidden="true"></div>
+                          <div class="wheelFadeBot" aria-hidden="true"></div>
+                        </div>
+                      </div>
+
+                      <div class="wheelBox">
+                        <div class="wheelLabel">Symbol</div>
+                        <div class="wheelFrame">
+                          <div class="wheel" id="suitWheel" aria-label="Symbol"></div>
+                          <div class="wheelCenter" aria-hidden="true"></div>
+                          <div class="wheelFadeTop" aria-hidden="true"></div>
+                          <div class="wheelFadeBot" aria-hidden="true"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="btnRow">
+                    <button id="commit" class="primary" type="button">Übernehmen</button>
+                    <button id="clearSlotBtn" class="ghost" type="button">Slot leeren</button>
+                  </div>
+
+                  <div class="muted" style="line-height:1.35;">
+                    Slot antippen zum Ersetzen. Preview antippen = sofort übernehmen.
                   </div>
                 </div>
               </div>
-
             </div>
 
-            <div class="btnRow">
-              <button id="commit" class="primary" type="button">Übernehmen</button>
-              <button id="clearSlotBtn" class="ghost" type="button">Slot leeren</button>
-            </div>
-
-            <div class="muted" style="line-height:1.35;">
-              Slot antippen zum Ersetzen. Preview antippen = sofort übernehmen.
-            </div>
-          </div>
-        </div>
+          </div><!-- /cardsGrid -->
+        </div><!-- /bd -->
       </section>
 
-      <!-- ========== UNTEN (FULL WIDTH): Berechnen + Ergebnis (als ein breiter Block) ========== -->
+      <!-- ====== UNTEN (FULL WIDTH): Berechnen + Ergebnis ====== -->
       <section class="panel area-compute" id="panelCompute">
         <div class="hd">
           <div class="ttl">Berechnen & Ergebnis</div>
