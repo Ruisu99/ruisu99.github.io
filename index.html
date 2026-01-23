@@ -3,642 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover" />
-  <title>Hold’em Helper – Pro</title>
+  <title>Hold’em Helper</title>
 
   <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="color-scheme" content="dark light">
 
-  <style>
-    :root{
-      --bg1:#0b1220; --bg2:#07252a;
-      --card: rgba(15,27,46,.78);
-      --text:#e8eefc; --muted:#9fb0d0; --line:rgba(255,255,255,.10);
-      --accent:#7aa7ff; --accent2:#53f0b5;
-      --good:#53f0b5; --warn:#ffd166; --bad:#ff5c7a;
-      --shadow: 0 18px 60px rgba(0,0,0,.35);
-      --radius: 18px;
-    }
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color:var(--text);
-      background:
-        radial-gradient(900px 700px at 12% 10%, rgba(122,167,255,.22), transparent 60%),
-        radial-gradient(800px 700px at 84% 35%, rgba(83,240,181,.14), transparent 55%),
-        linear-gradient(160deg, var(--bg1), var(--bg2));
-      min-height:100vh;
-      padding:14px 14px 120px;
-    }
-    .wrap{ max-width:980px; margin:0 auto; }
-
-    header{
-      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
-      margin-bottom:12px;
-    }
-    .title{
-      font-size:20px; margin:0; letter-spacing:.2px; font-weight:950;
-      background: linear-gradient(135deg, rgba(122,167,255,.95), rgba(83,240,181,.85));
-      -webkit-background-clip:text; background-clip:text; color:transparent;
-      text-shadow: 0 0 24px rgba(122,167,255,.12);
-    }
-    .hdrRight{
-      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px; border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      font-weight:900; font-size:12px;
-      user-select:none;
-    }
-    .iconBtn{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      font-weight:950; font-size:12px;
-      cursor:pointer;
-      transition: background .2s ease, transform .08s ease, box-shadow .2s ease;
-      user-select:none;
-      white-space:nowrap;
-    }
-    .iconBtn:hover{
-      background: rgba(255,255,255,.08);
-      box-shadow: 0 0 0 3px rgba(122,167,255,.10) inset;
-    }
-    .iconBtn:active{ transform: translateY(1px) scale(.99); }
-
-    .grid{ display:grid; grid-template-columns:1fr; gap:12px; }
-    .panel{
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      transform: translateY(0);
-      animation: rise .32s cubic-bezier(.2,.9,.2,1) both;
-    }
-    @keyframes rise{
-      from{ opacity:0; transform: translateY(10px); }
-      to{ opacity:1; transform: translateY(0); }
-    }
-    .hd{
-      padding:12px 14px;
-      border-bottom:1px solid var(--line);
-      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
-    }
-    .ttl{ font-weight:950; letter-spacing:.2px; font-size:13.5px; }
-    .muted{ color:var(--muted); font-size:12px; }
-    .bd{ padding:12px 14px 14px; }
-
-    .stepBadge{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:6px 10px; border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color: var(--muted);
-      font-weight:950; font-size:12px;
-    }
-    .stepBadge b{ color:var(--text); }
-
-    .seg{
-      display:flex; gap:8px; flex-wrap:wrap;
-      background: rgba(255,255,255,.03);
-      border:1px solid var(--line);
-      padding:6px; border-radius: 999px;
-    }
-    .seg button{
-      appearance:none; border:0; cursor:pointer;
-      padding:8px 10px; border-radius: 999px;
-      background: transparent;
-      color: var(--muted);
-      font-weight:950; font-size:12px;
-      transition: background .2s ease, transform .08s ease, color .2s ease;
-    }
-    .seg button:hover{ transform: translateY(-1px); color: var(--text); }
-    .seg button.active{
-      background: linear-gradient(135deg, rgba(122,167,255,.90), rgba(83,240,181,.62));
-      color:#081124;
-      box-shadow: 0 10px 30px rgba(0,0,0,.18);
-    }
-
-    .sectionLabel{ font-size:12px; color:var(--muted); font-weight:900; margin:0 0 8px 2px; }
-    .slots{ display:flex; gap:10px; flex-wrap:wrap; }
-
-    .slot{
-      width:72px; height:92px;
-      border-radius: 16px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      display:flex; align-items:center; justify-content:center;
-      cursor:pointer; user-select:none;
-      transition: transform .14s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
-      position:relative;
-      touch-action: manipulation;
-    }
-    .slot:hover{
-      background: rgba(255,255,255,.05);
-      box-shadow: 0 0 0 2px rgba(255,255,255,.05) inset;
-    }
-    .slot:active{ transform: translateY(1px) scale(.99); }
-    .slot.sel{
-      border-color: rgba(122,167,255,.65);
-      box-shadow:
-        0 0 0 3px rgba(122,167,255,.18) inset,
-        0 12px 30px rgba(122,167,255,.10);
-      background: rgba(122,167,255,.08);
-    }
-    .slot.pulse{ animation: pulse .55s cubic-bezier(.2,.9,.2,1) both; }
-    @keyframes pulse{
-      0%{ transform: scale(1); }
-      45%{ transform: scale(1.04); }
-      100%{ transform: scale(1); }
-    }
-
-    .cardFace{
-      width:64px; height:84px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.14);
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-      display:flex; align-items:center; justify-content:center;
-      font-weight:950; letter-spacing:.4px; font-size:20px;
-      position:relative;
-      transition: transform .18s ease;
-    }
-    .mini{ position:absolute; left:8px; top:6px; font-size:11px; font-weight:950; }
-    .mini2{ position:absolute; right:8px; bottom:6px; font-size:11px; font-weight:950; opacity:.85; transform: rotate(180deg); }
-    .suit-red{ color:#ff6b8a; }
-    .suit-white{ color:#e8eefc; }
-    .emptyTxt{ font-size:14px; color: rgba(159,176,208,.7); font-weight:950; }
-
-    .picker{
-      display:grid;
-      grid-template-columns: 120px 1fr;
-      gap:12px;
-      align-items:center;
-    }
-    @media (max-width: 520px){
-      .picker{ grid-template-columns: 110px 1fr; }
-    }
-    .preview{
-      width:110px; height:140px;
-      border-radius: 20px;
-      border:1px solid rgba(255,255,255,.14);
-      background: linear-gradient(180deg, rgba(122,167,255,.16), rgba(83,240,181,.08));
-      display:flex; align-items:center; justify-content:center;
-      position:relative;
-      overflow:hidden;
-      box-shadow: 0 18px 50px rgba(0,0,0,.25);
-      cursor: pointer;
-      user-select: none;
-      touch-action: manipulation;
-    }
-    .preview::after{
-      content:"";
-      position:absolute;
-      inset:-30% -60%;
-      background: radial-gradient(closest-side, rgba(83,240,181,.22), transparent 60%);
-      transform: translateX(-20%);
-      filter: blur(2px);
-      opacity:.55;
-      pointer-events:none;
-    }
-    .preview .cardFace{
-      width:92px; height:120px; border-radius:18px;
-      font-size:30px;
-      box-shadow: 0 12px 32px rgba(0,0,0,.18);
-    }
-    .preview.bump .cardFace{ transform: scale(1.02); }
-    .targetChip{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      font-weight:950; font-size:12px;
-      color: var(--muted);
-      margin-bottom:10px;
-    }
-    .targetChip b{ color: var(--text); }
-
-    label{ display:block; font-size:12px; color:var(--muted); margin:8px 0 6px; font-weight:900; }
-
-    /* ===== Slider Base (progress fill) ===== */
-    .range{
-      width:100%;
-      -webkit-appearance:none;
-      appearance:none;
-      height:12px;
-      border-radius:999px;
-      outline:none;
-      border:1px solid rgba(255,255,255,.10);
-      --p: 50;
-      background:
-        linear-gradient(
-          90deg,
-          rgba(122,167,255,.90) 0%,
-          rgba(83,240,181,.72) calc(var(--p)*1%),
-          rgba(255,255,255,.10) calc(var(--p)*1%),
-          rgba(255,255,255,.06) 100%
-        );
-      box-shadow: 0 0 0 1px rgba(255,255,255,.04) inset;
-      transition: filter .18s ease;
-    }
-    .range:hover{ filter: brightness(1.05); }
-    .range::-webkit-slider-thumb{
-      -webkit-appearance:none; appearance:none;
-      width:24px; height:24px; border-radius:999px;
-      background: rgba(255,255,255,.94);
-      border: 2px solid rgba(0,0,0,.18);
-      box-shadow:
-        0 10px 25px rgba(0,0,0,.25),
-        0 0 0 6px rgba(122,167,255,.14);
-      transition: transform .12s ease, box-shadow .2s ease;
-    }
-    .range:active::-webkit-slider-thumb{
-      transform: scale(1.05);
-      box-shadow:
-        0 10px 25px rgba(0,0,0,.25),
-        0 0 0 7px rgba(83,240,181,.18);
-    }
-    .range::-moz-range-thumb{
-      width:24px; height:24px; border-radius:999px;
-      background: rgba(255,255,255,.94);
-      border: 2px solid rgba(0,0,0,.18);
-      box-shadow:
-        0 10px 25px rgba(0,0,0,.25),
-        0 0 0 6px rgba(122,167,255,.14);
-      transition: transform .12s ease, box-shadow .2s ease;
-    }
-    .range:active::-moz-range-thumb{
-      transform: scale(1.05);
-      box-shadow:
-        0 10px 25px rgba(0,0,0,.25),
-        0 0 0 7px rgba(83,240,181,.18);
-    }
-
-    /* ===== Suit slider: always fully filled + color by suit (smooth) ===== */
-    #suit.range{
-      background:
-        linear-gradient(90deg,
-          var(--suitA, rgba(160,190,255,.92)),
-          var(--suitB, rgba(92,142,255,.78))
-        ),
-        linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,0));
-      background-blend-mode: overlay;
-      transition: filter .18s ease, background .35s ease;
-      box-shadow: 0 0 0 1px rgba(255,255,255,.04) inset;
-    }
-    #suit.range::-webkit-slider-thumb{
-      box-shadow:
-        0 10px 25px rgba(0,0,0,.25),
-        0 0 0 7px var(--suitGlow, rgba(160,190,255,.24));
-    }
-    #suit.range:active::-webkit-slider-thumb{
-      box-shadow:
-        0 10px 25px rgba(0,0,0,.25),
-        0 0 0 8px var(--suitGlow, rgba(82,240,182,.24));
-    }
-    #suit.range::-moz-range-thumb{
-      box-shadow:
-        0 10px 25px rgba(0,0,0,.25),
-        0 0 0 7px var(--suitGlow, rgba(160,190,255,.24));
-    }
-    #suit.range:active::-moz-range-thumb{
-      box-shadow:
-        0 10px 25px rgba(0,0,0,.25),
-        0 0 0 8px var(--suitGlow, rgba(82,240,182,.24));
-    }
-
-    .kv{ display:flex; justify-content:space-between; gap:10px; font-size:12px; color: var(--muted); margin-top:6px; }
-
-    .btnRow{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
-    button{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius: 14px;
-      cursor:pointer;
-      font-weight:950;
-      letter-spacing:.2px;
-      transition: transform .08s ease, background .2s ease, box-shadow .2s ease, opacity .2s ease;
-      font-size:13px;
-      touch-action: manipulation;
-    }
-    button:hover{
-      background: rgba(255,255,255,.09);
-      box-shadow: 0 0 0 3px rgba(255,255,255,.04) inset;
-    }
-    button:active{ transform: translateY(1px) scale(.99); }
-    button.primary{
-      background: linear-gradient(135deg, rgba(122,167,255,.92), rgba(83,240,181,.72));
-      color:#081124;
-      border-color: rgba(255,255,255,.18);
-      box-shadow: 0 14px 40px rgba(0,0,0,.22);
-    }
-    button.primary:hover{
-      box-shadow:
-        0 16px 46px rgba(0,0,0,.25),
-        0 0 0 3px rgba(122,167,255,.10) inset;
-    }
-    button.ghost{ background: rgba(255,255,255,.03); }
-    button.danger{
-      background: rgba(255,92,122,.10);
-      border-color: rgba(255,92,122,.25);
-      color:#ffd6df;
-    }
-    button.danger:hover{ background: rgba(255,92,122,.14); }
-    button:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
-
-    .err{
-      display:none;
-      border:1px solid rgba(255,92,122,.35);
-      background: rgba(255,92,122,.09);
-      color:#ffd6df;
-      padding:10px 12px;
-      border-radius: 14px;
-      margin-top:10px;
-      font-size:12.5px;
-      line-height:1.35;
-      animation: shake .28s ease both;
-    }
-    @keyframes shake{
-      0%{ transform: translateX(0); }
-      35%{ transform: translateX(-2px); }
-      70%{ transform: translateX(2px); }
-      100%{ transform: translateX(0); }
-    }
-
-    .resultGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-    }
-    @media (max-width: 520px){
-      .resultGrid{ grid-template-columns: 1fr; }
-    }
-    .kpi{
-      border:1px solid var(--line);
-      border-radius: 16px;
-      padding:12px;
-      background: rgba(255,255,255,.03);
-      transition: transform .18s ease;
-    }
-    .kpi:hover{ transform: translateY(-1px); }
-    .k{ font-size:12px; color:var(--muted); margin-bottom:6px; font-weight:950; }
-    .v{ font-size:18px; font-weight:950; letter-spacing:.2px; }
-    .s{ font-size:12px; color:var(--muted); margin-top:6px; line-height:1.35; }
-    .tag{
-      display:inline-flex; align-items:center;
-      padding:6px 10px; border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      font-weight:950; font-size:12px;
-      margin-left:8px;
-      white-space:nowrap;
-    }
-    .tag.good{ color:var(--good); }
-    .tag.warn{ color:var(--warn); }
-    .tag.bad{ color:var(--bad); }
-
-    details{
-      border:1px solid var(--line);
-      border-radius: 16px;
-      overflow:hidden;
-      background: rgba(255,255,255,.03);
-      margin-top:10px;
-    }
-    summary{
-      cursor:pointer;
-      list-style:none;
-      padding:12px 12px;
-      font-weight:950;
-      color: var(--text);
-      font-size:13px;
-    }
-    summary::-webkit-details-marker{ display:none; }
-    .adv{ padding:0 12px 12px; border-top:1px solid var(--line); }
-    .advGrid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
-    @media (max-width: 520px){ .advGrid{ grid-template-columns:1fr; } }
-    input[type="number"], select{
-      width:100%;
-      padding:10px 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      color:var(--text);
-      outline:none;
-      font-weight:900;
-      transition: box-shadow .2s ease, background .2s ease;
-    }
-    input[type="number"]:focus, select:focus{
-      box-shadow: 0 0 0 3px rgba(122,167,255,.16);
-      background: rgba(255,255,255,.05);
-    }
-    select option{ background:#0c1628; }
-
-    .bottomBar{
-      position:fixed;
-      left:0; right:0; bottom:0;
-      padding:10px 14px;
-      background: rgba(7,14,26,.72);
-      backdrop-filter: blur(12px);
-      border-top:1px solid rgba(255,255,255,.10);
-      z-index: 20;
-    }
-    .bottomWrap{ max-width:980px; margin:0 auto; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
-    .bar{
-      flex: 1 1 220px;
-      height:10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.05);
-      overflow:hidden;
-    }
-    .bar > div{
-      height:100%;
-      width:0%;
-      background: linear-gradient(90deg, rgba(122,167,255,.85), rgba(83,240,181,.75));
-      transition: width .18s ease;
-    }
-    .statusTxt{ font-size:12px; color:var(--muted); font-weight:950; }
-
-    .floatCard{
-      position:fixed;
-      z-index: 9999;
-      pointer-events:none;
-      transform-origin: center center;
-      filter: drop-shadow(0 22px 40px rgba(0,0,0,.45));
-    }
-
-    .chips{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
-    .chip{
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color: var(--muted);
-      font-weight:950;
-      font-size:12px;
-      transition: background .2s ease, transform .08s ease, border-color .2s ease;
-    }
-    .chip:hover{ transform: translateY(-1px); border-color: rgba(122,167,255,.25); }
-    .chip.active{
-      background: rgba(122,167,255,.14);
-      color: var(--text);
-      border-color: rgba(122,167,255,.35);
-      box-shadow: 0 0 0 3px rgba(122,167,255,.10) inset;
-    }
-    .bigCTA{
-      width:100%;
-      padding:14px 14px;
-      font-size:15px;
-      border-radius: 16px;
-    }
-    .ctaHint{
-      margin-top:10px;
-      font-size:12px;
-      color: var(--muted);
-      line-height:1.35;
-    }
-
-    /* ===== Hand-Rankings Modal ===== */
-    .modalOverlay{
-      position:fixed;
-      inset:0;
-      background: rgba(0,0,0,.55);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:16px;
-      z-index: 10050;
-      opacity: 0;
-      transition: opacity .18s ease;
-    }
-    .modalOverlay.show{ opacity: 1; }
-
-    .modal{
-      width:min(820px, 100%);
-      max-height: min(76vh, 720px);
-      overflow:auto;
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(15,27,46,.92);
-      box-shadow: 0 28px 80px rgba(0,0,0,.55);
-      transform: translateY(10px) scale(.985);
-      opacity: 0;
-      transition: transform .22s cubic-bezier(.2,.9,.2,1), opacity .18s ease;
-    }
-    .modalOverlay.show .modal{
-      transform: translateY(0) scale(1);
-      opacity: 1;
-    }
-    .modalHd{
-      position:sticky;
-      top:0;
-      background: rgba(15,27,46,.96);
-      border-bottom:1px solid rgba(255,255,255,.10);
-      padding:12px 14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      z-index:1;
-    }
-    .modalTitle{
-      font-weight:950;
-      letter-spacing:.2px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .closeBtn{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      border-radius: 12px;
-      padding:8px 10px;
-      font-weight:950;
-      cursor:pointer;
-      transition: background .2s ease, transform .08s ease;
-    }
-    .closeBtn:hover{ background: rgba(255,255,255,.09); }
-    .closeBtn:active{ transform: translateY(1px) scale(.99); }
-
-    .modalBody{ padding:12px 14px 14px; }
-    .handsTable{
-      width:100%;
-      border-collapse: separate;
-      border-spacing:0 10px;
-    }
-    .handsRow{
-      background: rgba(255,255,255,.03);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: 14px;
-      overflow:hidden;
-    }
-    .handsRow td{
-      padding:10px 12px;
-      vertical-align:middle;
-      border-top:1px solid rgba(255,255,255,.08);
-    }
-    .handsRow td:first-child{
-      width: 42%;
-      font-weight:950;
-      color: var(--text);
-      border-right:1px solid rgba(255,255,255,.08);
-    }
-    @media (max-width: 620px){
-      .handsRow td:first-child{ width: 52%; }
-    }
-    .handNameSub{
-      display:block;
-      color: var(--muted);
-      font-weight:900;
-      font-size:12px;
-      margin-top:3px;
-    }
-    .miniCards{
-      display:flex;
-      gap:6px;
-      flex-wrap:wrap;
-      justify-content:flex-start;
-      align-items:center;
-    }
-    .mCard{
-      width:34px;
-      height:44px;
-      border-radius: 10px;
-      border:1px solid rgba(255,255,255,.16);
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:950;
-      font-size:13px;
-      letter-spacing:.2px;
-    }
-    .mRed{ color:#ff6b8a; }
-    .mWhite{ color:#e8eefc; }
-    .modalNote{
-      margin-top:10px;
-      font-size:12px;
-      color: var(--muted);
-      line-height:1.35;
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      .panel, .slot.pulse, .err, .modalOverlay, .modal, .bar > div { animation:none !important; transition:none !important; }
-      .floatCard{ display:none !important; }
-    }
-  </style>
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 
 <body>
@@ -653,167 +24,208 @@
       </div>
     </header>
 
-    <div class="grid">
+    <!-- ===== Desktop: 2 oben (Setup/Picker) + 1 unten full width (Compute) ===== -->
+    <div class="layout">
 
-      <!-- 1) Setup -->
-      <section class="panel" id="panelSetup">
+      <!-- ========== OBEN LINKS: Setup (Kartenanzeige + Gegnerauswahl) ========== -->
+      <section class="panel area-setup" id="panelSetup">
         <div class="hd">
-          <div class="ttl"><span class="stepBadge"><b>1</b> Setup</span></div>
+          <div class="ttl">
+            <span class="stepBadge"><b>1</b> Setup</span>
+          </div>
           <div class="muted" id="targetHint">Ziel: Hole 1</div>
         </div>
+
         <div class="bd">
-          <div class="seg" role="tablist" aria-label="Stage">
-            <button class="stageBtn active" data-stage="pre" type="button">Pre-Flop</button>
-            <button class="stageBtn" data-stage="flop" type="button">Flop</button>
-            <button class="stageBtn" data-stage="turn" type="button">Turn</button>
-            <button class="stageBtn" data-stage="river" type="button">River</button>
-          </div>
+          <div class="stack">
 
-          <div style="margin-top:12px;">
-            <label for="opp" style="margin-top:0;">Gegner (Anzahl)</label>
-            <input id="opp" class="range" type="range" min="1" max="8" step="1" value="3" />
-            <div class="muted" style="margin-top:6px;">Aktuell: <b id="oppVal">3</b></div>
-
-          <div style="margin-top:12px;">
-            <div class="sectionLabel">Deine Karten</div>
-            <div class="slots" id="heroSlots"></div>
-          </div>
-
-          <div id="boardArea" style="margin-top:12px; display:none;">
-            <div class="sectionLabel">Board</div>
-            <div class="slots" id="boardSlots"></div>
-          </div>
-
-          <div class="btnRow">
-            <button id="undoBtn" class="ghost" type="button">Undo</button>
-            <button id="resetBtn" class="ghost" type="button">Reset</button>
-          </div>
-
-          <div id="err" class="err"></div>
-        </div>
-      </section>
-
-      <!-- 2) Card Picker -->
-      <section class="panel" id="panelPicker">
-        <div class="hd">
-          <div class="ttl"><span class="stepBadge"><b>2</b> Karte wählen</span></div>
-          <div class="muted">Rang + Symbol → Übernehmen</div>
-        </div>
-        <div class="bd">
-          <div class="targetChip" id="targetChip">Ziel: <b id="targetChipVal">Hole 1</b></div>
-
-          <div class="picker">
-            <div class="preview" id="preview" title="Tippen = Übernehmen">
-              <div class="cardFace" id="previewCard"></div>
+            <div class="seg" role="tablist" aria-label="Stage">
+              <button class="stageBtn active" data-stage="pre" type="button">Pre-Flop</button>
+              <button class="stageBtn" data-stage="flop" type="button">Flop</button>
+              <button class="stageBtn" data-stage="turn" type="button">Turn</button>
+              <button class="stageBtn" data-stage="river" type="button">River</button>
             </div>
 
             <div>
-              <label for="rank">Rang</label>
-              <input id="rank" class="range" type="range" min="0" max="12" step="1" value="12" />
-              <div class="kv"><span>2</span><span>A</span></div>
+              <label for="opp" style="margin-top:0;">Gegner (Anzahl)</label>
+              <input id="opp" class="range" type="range" min="1" max="8" step="1" value="3" />
+              <div class="muted" style="margin-top:6px;">Aktuell: <b id="oppVal">3</b></div>
+            </div>
 
-              <label for="suit">Symbol</label>
-              <input id="suit" class="range" type="range" min="0" max="3" step="1" value="0" />
-              <div class="kv"><span>♠</span><span>♣</span></div>
+            <div>
+              <div class="sectionLabel">Deine Karten</div>
+              <div class="slots" id="heroSlots"></div>
+            </div>
 
-              <div class="btnRow">
-                <button id="commit" class="primary" type="button">Übernehmen</button>
-                <button id="clearSlotBtn" class="ghost" type="button">Slot leeren</button>
+            <div id="boardArea" style="display:none;">
+              <div class="sectionLabel">Board</div>
+              <div class="slots" id="boardSlots"></div>
+            </div>
+
+            <div class="btnRow">
+              <button id="undoBtn" class="ghost" type="button">Undo</button>
+              <button id="resetBtn" class="ghost" type="button">Reset</button>
+            </div>
+
+            <div id="err" class="err"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== OBEN RECHTS: Wheel Picker ========== -->
+      <section class="panel area-picker" id="panelPicker">
+        <div class="hd">
+          <div class="ttl"><span class="stepBadge"><b>2</b> Karte wählen</span></div>
+          <div class="muted">Wheel → Übernehmen</div>
+        </div>
+
+        <div class="bd">
+          <div class="stack">
+            <div class="targetChip" id="targetChip">
+              Ziel: <b id="targetChipVal">Hole 1</b>
+            </div>
+
+            <div class="pickerLayout">
+              <div class="preview" id="preview" title="Tippen = Übernehmen">
+                <div class="cardFace" id="previewCard"></div>
               </div>
 
-              <div class="muted" style="margin-top:8px; line-height:1.35;">
-                Slot antippen zum Ersetzen. Preview antippen = sofort übernehmen.
+              <div class="wheelWrap">
+                <div class="wheelBox">
+                  <div class="wheelLabel">Rang</div>
+                  <div class="wheelFrame">
+                    <div class="wheel" id="rankWheel" aria-label="Rang"></div>
+                    <div class="wheelCenter" aria-hidden="true"></div>
+                    <div class="wheelFadeTop" aria-hidden="true"></div>
+                    <div class="wheelFadeBot" aria-hidden="true"></div>
+                  </div>
+                </div>
+
+                <div class="wheelBox">
+                  <div class="wheelLabel">Symbol</div>
+                  <div class="wheelFrame">
+                    <div class="wheel" id="suitWheel" aria-label="Symbol"></div>
+                    <div class="wheelCenter" aria-hidden="true"></div>
+                    <div class="wheelFadeTop" aria-hidden="true"></div>
+                    <div class="wheelFadeBot" aria-hidden="true"></div>
+                  </div>
+                </div>
               </div>
+
+            </div>
+
+            <div class="btnRow">
+              <button id="commit" class="primary" type="button">Übernehmen</button>
+              <button id="clearSlotBtn" class="ghost" type="button">Slot leeren</button>
+            </div>
+
+            <div class="muted" style="line-height:1.35;">
+              Slot antippen zum Ersetzen. Preview antippen = sofort übernehmen.
             </div>
           </div>
         </div>
       </section>
 
-      <!-- 3) Calculate -->
-      <section class="panel" id="panelCalc">
+      <!-- ========== UNTEN (FULL WIDTH): Berechnen + Ergebnis (als ein breiter Block) ========== -->
+      <section class="panel area-compute" id="panelCompute">
         <div class="hd">
-          <div class="ttl"><span class="stepBadge"><b>3</b> Berechnen</span></div>
-          <div class="muted" id="modeHint">Auto: Monte-Carlo / Exakt (Heads-Up ab Flop)</div>
-        </div>
-        <div class="bd">
-          <button id="calcBtn" class="primary bigCTA" type="button" disabled>Berechnen</button>
-          <button id="cancelBtn" class="danger bigCTA" type="button" style="display:none; margin-top:10px;">Abbrechen</button>
-
-          <div class="ctaHint" id="ctaHint">Setze zuerst beide Hole Cards (und ggf. Board-Karten), dann wird „Berechnen“ aktiv.</div>
-
-          <details>
-            <summary>Erweitert</summary>
-            <div class="adv">
-              <div class="advGrid">
-                <div>
-                  <label for="iters">Max Iterationen (Monte-Carlo)</label>
-                  <input id="iters" class="range" type="range" min="10000" max="250000" step="5000" value="80000" />
-                  <div class="muted" style="margin-top:6px;">Max: <b id="itersVal">80000</b></div>
-                </div>
-                <div>
-                  <label for="calcMode">Rechenmodus</label>
-                  <select id="calcMode">
-                    <option value="auto" selected>Auto (empfohlen)</option>
-                    <option value="mc">Monte-Carlo</option>
-                    <option value="exact">Exakt (nur Heads-Up ab Flop)</option>
-                  </select>
-                </div>
-                <div>
-                  <label for="pot">Pot (optional)</label>
-                  <input id="pot" type="number" min="0" step="0.01" placeholder="z. B. 12.50" />
-                </div>
-                <div>
-                  <label for="call">Call (optional)</label>
-                  <input id="call" type="number" min="0" step="0.01" placeholder="z. B. 4.00" />
-                </div>
-              </div>
-            </div>
-          </details>
-        </div>
-      </section>
-
-      
-    <!-- Results -->
-      <section class="panel" id="resultsPanel">
-        <div class="hd">
-          <div class="ttl">Ergebnis</div>
+          <div class="ttl">Berechnen & Ergebnis</div>
           <div class="muted">Equity / W-T-L / Empfehlung</div>
         </div>
+
         <div class="bd">
-          <div class="resultGrid" id="result" style="display:none;">
-            <div class="kpi">
-              <div class="k">Equity</div>
-              <div class="v" id="equity">—</div>
-              <div class="s" id="equityMeta">Score: —/100</div>
-              <div class="s" id="handNow">Aktuelle Kombination: —</div>
-              <div class="s" id="wtl">W/T/L: —</div>
-              <div class="s" id="ci">—</div>
+          <div class="computeGrid">
+
+            <!-- Berechnen -->
+            <div class="subCard" id="panelCalc">
+              <div class="subHd">
+                <div class="ttl"><span class="stepBadge"><b>3</b> Berechnen</span></div>
+                <div class="muted" id="modeHint">Auto: Monte-Carlo / Exakt (Heads-Up ab Flop)</div>
+              </div>
+              <div class="subBd">
+                <button id="calcBtn" class="primary bigCTA" type="button" disabled>Berechnen</button>
+                <button id="cancelBtn" class="danger bigCTA" type="button" style="display:none; margin-top:10px;">Abbrechen</button>
+
+                <div class="ctaHint" id="ctaHint">
+                  Setze zuerst beide Hole Cards (und ggf. Board-Karten), dann wird „Berechnen“ aktiv.
+                </div>
+
+                <details>
+                  <summary>Erweitert</summary>
+                  <div class="adv">
+                    <div class="advGrid">
+                      <div>
+                        <label for="iters">Max Iterationen (Monte-Carlo)</label>
+                        <input id="iters" class="range" type="range" min="10000" max="250000" step="5000" value="80000" />
+                        <div class="muted" style="margin-top:6px;">Max: <b id="itersVal">80000</b></div>
+                      </div>
+                      <div>
+                        <label for="calcMode">Rechenmodus</label>
+                        <select id="calcMode">
+                          <option value="auto" selected>Auto (empfohlen)</option>
+                          <option value="mc">Monte-Carlo</option>
+                          <option value="exact">Exakt (nur Heads-Up ab Flop)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label for="pot">Pot (optional)</label>
+                        <input id="pot" type="number" min="0" step="0.01" placeholder="z. B. 12.50" />
+                      </div>
+                      <div>
+                        <label for="call">Call (optional)</label>
+                        <input id="call" type="number" min="0" step="0.01" placeholder="z. B. 4.00" />
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              </div>
             </div>
 
-            <div class="kpi">
-              <div class="k">Empfehlung</div>
-              <div class="v" id="advice">—</div>
-              <div class="s" id="adviceDetail">—</div>
-               <div class="spacer" aria-hidden="true"></div>
-              <div class="k">Entscheidungs-Score</div>
-              <div class="v" id="decisionScore">—</div>
-              <div class="s" id="decisionLabel">—</div>
-              <div class="s" id="decisionWhy">—</div>
+            <!-- Ergebnis -->
+            <div class="subCard" id="resultsPanel">
+              <div class="subHd">
+                <div class="ttl">Ergebnis</div>
+                <div class="muted">Output</div>
+              </div>
+              <div class="subBd">
+                <div class="resultGrid" id="result" style="display:none;">
+                  <div class="kpi">
+                    <div class="k">Equity</div>
+                    <div class="v" id="equity">—</div>
+                    <div class="s" id="equityMeta">Score: —/100</div>
+                    <div class="s" id="handNow">Aktuelle Kombination: —</div>
+                    <div class="s" id="wtl">W/T/L: —</div>
+                    <div class="s" id="ci">—</div>
+                  </div>
+
+                  <div class="kpi">
+                    <div class="k">Empfehlung</div>
+                    <div class="v" id="advice">—</div>
+                    <div class="s" id="adviceDetail">—</div>
+
+                    <div style="height:10px;"></div>
+
+                    <div class="k">Entscheidungs-Score</div>
+                    <div class="v" id="decisionScore">—</div>
+                    <div class="s" id="decisionLabel">—</div>
+                    <div class="s" id="decisionWhy">—</div>
+                  </div>
+
+                  <div class="kpi">
+                    <div class="k">Details</div>
+                    <div class="v" id="details">—</div>
+                    <div class="s" id="details2">—</div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div class="kpi">
-              <div class="k">Details</div>
-              <div class="v" id="details">—</div>
-              <div class="s" id="details2">—</div>
-            </div>
-
-    
-          </div>
+          </div><!-- /computeGrid -->
         </div>
       </section>
 
-    </div>
-  </div>
+    </div><!-- /layout -->
+  </div><!-- /wrap -->
 
   <div class="bottomBar">
     <div class="bottomWrap">
@@ -899,1241 +311,6 @@
     </div>
   </div>
 
-<script>
-/* =========================
-   Persistence (LocalStorage)
-========================= */
-const STORAGE_KEY = 'holdem_helper_state_v4';
-let _saveQueued = false;
-function safeParseJSON(s){
-  try{ return JSON.parse(s); } catch{ return null; }
-}
-function saveStateDebounced(){
-  if (_saveQueued) return;
-  _saveQueued = true;
-  requestAnimationFrame(()=>{
-    _saveQueued = false;
-    const st = {
-      stage,
-      opp: Number(oppEl.value),
-      iters: Number(itersEl.value),
-      calcMode: String(calcModeEl.value),
-      pot: potEl.value,
-      call: callEl.value,
-      rank: Number(rankEl.value),
-      suit: Number(suitEl.value),
-    };
-    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(st)); } catch {}
-  });
-}
-function loadState(){
-  const st = safeParseJSON(localStorage.getItem(STORAGE_KEY) || '');
-  if (!st) return null;
-  return st;
-}
-
-/* =========================
-   Deck / Card Mapping
-========================= */
-const RANKS = '23456789TJQKA'.split('');
-const SUITS = [
-  {c:'s', sym:'♠', red:false},
-  {c:'h', sym:'♥', red:true},
-  {c:'d', sym:'♦', red:true},
-  {c:'c', sym:'♣', red:false},
-];
-
-const CARD_IDS = [];
-const ID_RANK = [];
-const ID_SUIT = [];
-const CODE_TO_ID = Object.create(null);
-
-for (let si=0; si<4; si++){
-  for (let ri=0; ri<13; ri++){
-    const code = RANKS[ri] + SUITS[si].c;
-    const id = CARD_IDS.length;
-    CARD_IDS.push(code);
-    ID_RANK.push(ri+2);
-    ID_SUIT.push(si);
-    CODE_TO_ID[code]=id;
-  }
-}
-
-function cardHTML(id){
-  const code = CARD_IDS[id];
-  const r = code[0];
-  const s = code[1];
-  const suit = SUITS.find(x=>x.c===s);
-  const cls = suit.red ? 'suit-red' : 'suit-white';
-  return `
-    <div class="cardFace">
-      <div class="mini">${r}<span class="${cls}">${suit.sym}</span></div>
-      <div>${r}<span class="${cls}">${suit.sym}</span></div>
-      <div class="mini2">${r}<span class="${cls}">${suit.sym}</span></div>
-    </div>
-  `;
-}
-function emptyHTML(){ return `<div class="emptyTxt">—</div>`; }
-
-/* =========================
-   Stronger RNG (crypto fallback)
-========================= */
-function randUint32(){
-  if (globalThis.crypto && crypto.getRandomValues){
-    const a = new Uint32Array(1);
-    crypto.getRandomValues(a);
-    return a[0] >>> 0;
-  }
-  return (Math.random() * 0x100000000) >>> 0;
-}
-function randInt(max){
-  // unbiased rejection sampling
-  if (max <= 1) return 0;
-  const limit = Math.floor(0x100000000 / max) * max;
-  let x;
-  do { x = randUint32(); } while (x >= limit);
-  return x % max;
-}
-
-/* =========================
-   7-card eval via 5-card combos
-========================= */
-const COMB_7C5 = [];
-for (let a=0; a<7; a++)
-for (let b=a+1; b<7; b++)
-for (let c=b+1; c<7; c++)
-for (let d=c+1; d<7; d++)
-for (let e=d+1; e<7; e++)
-  COMB_7C5.push([a,b,c,d,e]);
-
-function packRanks(ranksDesc){
-  let v = 0;
-  for (let i=0;i<5;i++) v = (v << 4) | (ranksDesc[i] || 0);
-  return v;
-}
-function eval5(ids5){
-  const r = ids5.map(id => ID_RANK[id]).sort((a,b)=>b-a);
-  const s0=ID_SUIT[ids5[0]], s1=ID_SUIT[ids5[1]], s2=ID_SUIT[ids5[2]], s3=ID_SUIT[ids5[3]], s4=ID_SUIT[ids5[4]];
-  const isFlush = (s0===s1 && s1===s2 && s2===s3 && s3===s4);
-
-  const counts = new Map();
-  for (const x of r) counts.set(x, (counts.get(x)||0)+1);
-  const groups = Array.from(counts.entries()).map(([rank,count])=>({rank,count}));
-  groups.sort((a,b)=> (b.count-a.count) || (b.rank-a.rank));
-
-  let straightHigh = 0;
-  if (groups.length === 5){
-    const uniqAsc = [...new Set(r)].sort((a,b)=>a-b);
-    const min=uniqAsc[0], max=uniqAsc[4];
-    if (max-min===4) straightHigh = max;
-    else {
-      const wheel = (uniqAsc[0]===2 && uniqAsc[1]===3 && uniqAsc[2]===4 && uniqAsc[3]===5 && uniqAsc[4]===14);
-      if (wheel) straightHigh=5;
-    }
-  }
-
-  if (straightHigh && isFlush) return (8<<20) | packRanks([straightHigh]);
-  if (groups[0].count===4) return (7<<20) | packRanks([groups[0].rank, groups[1].rank]);
-  if (groups[0].count===3 && groups[1].count===2) return (6<<20) | packRanks([groups[0].rank, groups[1].rank]);
-  if (isFlush) return (5<<20) | packRanks(r);
-  if (straightHigh) return (4<<20) | packRanks([straightHigh]);
-  if (groups[0].count===3){
-    const trip = groups[0].rank;
-    const kickers = r.filter(x=>x!==trip);
-    return (3<<20) | packRanks([trip, ...kickers]);
-  }
-  if (groups[0].count===2 && groups[1].count===2){
-    const p1=groups[0].rank, p2=groups[1].rank;
-    const hi=Math.max(p1,p2), lo=Math.min(p1,p2);
-    const kicker = r.find(x=>x!==p1 && x!==p2);
-    return (2<<20) | packRanks([hi,lo,kicker]);
-  }
-  if (groups[0].count===2){
-    const pair=groups[0].rank;
-    const kickers=r.filter(x=>x!==pair);
-    return (1<<20) | packRanks([pair, ...kickers]);
-  }
-  return (0<<20) | packRanks(r);
-}
-function eval7(ids7){
-  let best=-1;
-  for (const idx of COMB_7C5){
-    const v = eval5([ids7[idx[0]], ids7[idx[1]], ids7[idx[2]], ids7[idx[3]], ids7[idx[4]]]);
-    if (v>best) best=v;
-  }
-  return best;
-}
-
-/* =========================
-   Equity Engine + Cancel
-========================= */
-function buildRemainingDeck(used){
-  const deck=[];
-  for (let id=0; id<52; id++) if (!used.has(id)) deck.push(id);
-  return deck;
-}
-function partialShuffle(deck, k){
-  for (let i=0;i<k;i++){
-    const j = i + randInt(deck.length - i);
-    [deck[i], deck[j]] = [deck[j], deck[i]];
-  }
-}
-function sleep0(){ return new Promise(r=>setTimeout(r,0)); }
-
-function meanSeFromSums(sum, sumSq, n){
-  const mean = sum/n;
-  const varEst = Math.max(0, (sumSq/n) - mean*mean);
-  const se = Math.sqrt(varEst/n);
-  return {mean, se};
-}
-
-async function exactHeadsUpFromFlop(hero2, boardKnown, onProgress, shouldCancel){
-  const known = boardKnown.slice();
-  const missing = 5 - known.length;
-  if (missing < 0 || missing > 2) throw new Error('Exact Heads-Up ist hier nur ab Flop (3 Boardkarten) sinnvoll.');
-  if (known.length < 3) throw new Error('Exact Heads-Up erst ab Flop (3 Boardkarten).');
-
-  const used0 = new Set([...hero2, ...known]);
-  const deck0 = buildRemainingDeck(used0);
-
-  let win=0, tie=0, lose=0;
-  let equitySum = 0;
-
-  const cancelCheck = () => { if (shouldCancel && shouldCancel()) throw new Error('CANCELLED'); };
-
-  if (missing === 0){
-    const board5 = known;
-    const hv = eval7([hero2[0], hero2[1], board5[0], board5[1], board5[2], board5[3], board5[4]]);
-
-    const totalOpp = (deck0.length * (deck0.length-1)) / 2;
-    let done = 0;
-
-    for (let i=0;i<deck0.length;i++){
-      cancelCheck();
-      for (let j=i+1;j<deck0.length;j++){
-        const o1=deck0[i], o2=deck0[j];
-        const ov = eval7([o1,o2, board5[0],board5[1],board5[2],board5[3],board5[4]]);
-        if (hv>ov){ win++; equitySum+=1; }
-        else if (hv===ov){ tie++; equitySum+=0.5; }
-        else { lose++; }
-      }
-      done += (deck0.length - i - 1);
-      if (i % 6 === 0){
-        onProgress(Math.min(1, done/totalOpp));
-        await sleep0();
-      }
-    }
-  }
-
-  if (missing === 1){
-    const totalRunouts = deck0.length;
-    for (let r=0;r<deck0.length;r++){
-      cancelCheck();
-      const river = deck0[r];
-      const board5 = [...known, river];
-      const hv = eval7([hero2[0], hero2[1], board5[0],board5[1],board5[2],board5[3],board5[4]]);
-
-      const deck1 = [];
-      for (let i=0;i<deck0.length;i++) if (i!==r) deck1.push(deck0[i]);
-
-      for (let i=0;i<deck1.length;i++){
-        for (let j=i+1;j<deck1.length;j++){
-          const o1=deck1[i], o2=deck1[j];
-          const ov = eval7([o1,o2, board5[0],board5[1],board5[2],board5[3],board5[4]]);
-          if (hv>ov){ win++; equitySum+=1; }
-          else if (hv===ov){ tie++; equitySum+=0.5; }
-          else { lose++; }
-        }
-      }
-      if (r % 2 === 0){
-        onProgress(Math.min(1, (r+1)/totalRunouts));
-        await sleep0();
-      }
-    }
-  }
-
-  if (missing === 2){
-    const totalPairs = (deck0.length * (deck0.length-1)) / 2;
-    let donePairs = 0;
-
-    for (let a=0;a<deck0.length;a++){
-      cancelCheck();
-      for (let b=a+1;b<deck0.length;b++){
-        const turn = deck0[a], river = deck0[b];
-        const board5 = [...known, turn, river];
-        const hv = eval7([hero2[0], hero2[1], board5[0],board5[1],board5[2],board5[3],board5[4]]);
-
-        const deck1 = [];
-        for (let i=0;i<deck0.length;i++){
-          if (i!==a && i!==b) deck1.push(deck0[i]);
-        }
-
-        for (let i=0;i<deck1.length;i++){
-          for (let j=i+1;j<deck1.length;j++){
-            const o1=deck1[i], o2=deck1[j];
-            const ov = eval7([o1,o2, board5[0],board5[1],board5[2],board5[3],board5[4]]);
-            if (hv>ov){ win++; equitySum+=1; }
-            else if (hv===ov){ tie++; equitySum+=0.5; }
-            else { lose++; }
-          }
-        }
-
-        donePairs++;
-        if (donePairs % 28 === 0){
-          onProgress(Math.min(1, donePairs/totalPairs));
-          await sleep0();
-        }
-      }
-    }
-  }
-
-  const total = win + tie + lose;
-  return {
-    equity: equitySum / total,
-    winProb: win / total,
-    tieProb: tie / total,
-    loseProb: lose / total,
-    states: total,
-    mode: 'exact'
-  };
-}
-
-async function monteCarloEquityAdaptive(hero2, boardKnown, opponents, opts, onProgress, shouldCancel){
-  const {minIters, maxIters, targetHalfWidth95} = opts;
-
-  const used = new Set([...hero2, ...boardKnown]);
-  const deck = buildRemainingDeck(used);
-
-  const needBoard = 5 - boardKnown.length;
-  const needOpp = opponents*2;
-  const need = needBoard + needOpp;
-
-  let sum=0, sumSq=0, n=0;
-  let win=0, tie=0, lose=0;
-
-  const boardFull = new Array(5);
-  for (let i=0;i<boardKnown.length;i++) boardFull[i]=boardKnown[i];
-
-  const batch = 2200;
-  const cancelCheck = () => { if (shouldCancel && shouldCancel()) throw new Error('CANCELLED'); };
-
-  while (n < maxIters){
-    cancelCheck();
-    const end = Math.min(maxIters, n + batch);
-    for (; n < end; n++){
-      partialShuffle(deck, need);
-      let p=0;
-
-      for (let j=0;j<needBoard;j++){
-        boardFull[boardKnown.length + j] = deck[p++];
-      }
-
-      const hv = eval7([hero2[0], hero2[1], boardFull[0], boardFull[1], boardFull[2], boardFull[3], boardFull[4]]);
-
-      let best = hv, bestCount=1;
-      let heroBest = true;
-
-      for (let o=0;o<opponents;o++){
-        const c1=deck[p++], c2=deck[p++];
-        const ov = eval7([c1,c2, boardFull[0],boardFull[1],boardFull[2],boardFull[3],boardFull[4]]);
-        if (ov > best){
-          best = ov;
-          bestCount = 1;
-          heroBest = false;
-        } else if (ov === best){
-          bestCount++;
-        }
-        if (ov > hv) heroBest = false;
-      }
-
-      let outcome = 0;
-      if (heroBest && hv === best){
-        outcome = 1 / bestCount;
-        if (bestCount === 1) win++;
-        else tie++;
-      } else {
-        lose++;
-      }
-
-      sum += outcome;
-      sumSq += outcome*outcome;
-    }
-
-    const {mean, se} = meanSeFromSums(sum, sumSq, n);
-    const half = 1.96 * se;
-
-    onProgress(n / maxIters);
-
-    if (n >= minIters && half <= targetHalfWidth95){
-      return {
-        equity: mean,
-        se,
-        iters: n,
-        winProb: win/n,
-        tieProb: tie/n,
-        loseProb: lose/n,
-        half95: half,
-        mode: 'mc'
-      };
-    }
-    await sleep0();
-  }
-
-  const {mean, se} = meanSeFromSums(sum, sumSq, n);
-  return {
-    equity: mean,
-    se,
-    iters: n,
-    winProb: win/n,
-    tieProb: tie/n,
-    loseProb: lose/n,
-    half95: 1.96*se,
-    mode: 'mc'
-  };
-}
-
-/* =========================
-   Current Hand Name
-========================= */
-const CAT_DE = [
-  'Hohe Karte',
-  'Ein Paar',
-  'Zwei Paare',
-  'Drilling',
-  'Straße',
-  'Flush',
-  'Full House',
-  'Vierling',
-  'Straight Flush'
-];
-function getStraightHighFromPacked(packed20){
-  return (packed20 >>> 16) & 0xF;
-}
-function nameFromEval5Value(v){
-  const cat = (v >>> 20) & 0xF;
-  if (cat === 8){
-    const packed = v & ((1<<20)-1);
-    const hi = getStraightHighFromPacked(packed);
-    if (hi === 14) return 'Royal Flush';
-    return 'Straight Flush';
-  }
-  return CAT_DE[cat] || '—';
-}
-function currentHandName(hero2, boardKnown){
-  const cards = [...hero2, ...boardKnown].filter(x => x !== null && x !== undefined);
-  if (cards.length < 2) return '—';
-  if (cards.length < 5){
-    if (cards.length === 2 && ID_RANK[cards[0]] === ID_RANK[cards[1]]) return 'Ein Paar (Pocket Pair)';
-    return 'Hohe Karte';
-  }
-  const n = cards.length;
-  let best = -1;
-  for (let a=0;a<n-4;a++)
-  for (let b=a+1;b<n-3;b++)
-  for (let c=b+1;c<n-2;c++)
-  for (let d=c+1;d<n-1;d++)
-  for (let e=d+1;e<n;e++){
-    const v = eval5([cards[a], cards[b], cards[c], cards[d], cards[e]]);
-    if (v > best) best = v;
-  }
-  return nameFromEval5Value(best);
-}
-
-/* =========================
-   Decision Score System (reworked)
-   - Preflop: Chen formula -> mapped to 0..100 (intuitive)
-   - Postflop: Equity (+ Pot Odds if provided) with conservative penalties
-========================= */
-function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
-function tanh(x){ return Math.tanh ? Math.tanh(x) : ((Math.exp(2*x)-1)/(Math.exp(2*x)+1)); }
-
-// Chen high-card base points
-function chenHighPoints(rank){
-  if (rank === 14) return 10; // A
-  if (rank === 13) return 8;  // K
-  if (rank === 12) return 7;  // Q
-  if (rank === 11) return 6;  // J
-  return rank / 2;            // 2..T
-}
-function chenValue(hero2){
-  const r1 = ID_RANK[hero2[0]];
-  const r2 = ID_RANK[hero2[1]];
-  const s1 = ID_SUIT[hero2[0]];
-  const s2 = ID_SUIT[hero2[1]];
-  const suited = (s1 === s2);
-
-  const hi = Math.max(r1,r2);
-  const lo = Math.min(r1,r2);
-  const isPair = (hi === lo);
-
-  let score = chenHighPoints(hi);
-
-  if (isPair){
-    score *= 2;
-    score = Math.max(score, 5); // minimum for pairs
-    return Math.ceil(score);
-  }
-
-  if (suited) score += 2;
-
-  const gap = hi - lo - 1; // A always high => A2 counts as 4+ gap
-  if (gap === 1) score -= 1;
-  else if (gap === 2) score -= 2;
-  else if (gap === 3) score -= 4;
-  else if (gap >= 4) score -= 5;
-
-  // straight bonus: connected/1-gap and Q-high or lower
-  if (hi <= 12 && gap <= 1) score += 1;
-
-  return Math.ceil(score); // round up half-points
-}
-
-function preflopDecisionScore(hero2, opponents){
-  const chen = chenValue(hero2);       // typically 0..20 (can be negative for trash)
-  const chenNorm = clamp(chen / 20, 0, 1);
-
-  // Nonlinear map so Premium hands "fühlen sich" premium an
-  let score = 100 * Math.pow(chenNorm, 0.78);
-
-  // Multiway -> etwas tighter (zieht Richtung 50)
-  const tightness = clamp(1 - 0.04 * (opponents - 1), 0.68, 1);
-  score = 50 + (score - 50) * tightness;
-
-  return { score: clamp(score, 0, 100), chen };
-}
-
-function decisionScoreFromEquity({equity, opponents, pot, call, half95}){
-  const hasPot = Number.isFinite(pot) && pot >= 0;
-  const hasCall = Number.isFinite(call) && call >= 0;
-  const hasOdds = hasPot && hasCall && (pot + call) > 0 && call > 0;
-
-  let basisText;
-  let score;
-
-  if (hasOdds){
-    const required = call / (pot + call);
-    const edge = equity - required;
-    basisText = `Pot Odds: benötigt ${(required*100).toFixed(1)}% · Edge ${(edge*100).toFixed(1)}%`;
-    score = 50 + 50 * tanh(edge / 0.08);
-  } else {
-    const baseline = 1 / (opponents + 1);
-    const edge = equity - baseline;
-    basisText = `Baseline ${(baseline*100).toFixed(1)}% · Vorteil ${(edge*100).toFixed(1)}%`;
-    score = 50 + 50 * tanh(edge / 0.12);
-  }
-
-  // etwas konservativer multiway
-  score -= Math.max(0, opponents - 1) * 1.2;
-
-  // Unsicherheit (CI) minimal abwerten
-  if (Number.isFinite(half95)){
-    score -= clamp(half95 * 100 * 0.22, 0, 7);
-  }
-
-  return { score: clamp(score, 0, 100), basisText };
-}
-
-function actionFromScore(score, stage){
-  // Preflop: Schwellen so gesetzt, dass solide Hände nicht "weggefaltet" werden
-  const t = (stage === 'pre')
-    ? {raise:76, play:54, meh:46}
-    : {raise:72, play:58, meh:48};
-
-  if (score >= t.raise) return {label:'RAISE / VALUE', tag:'good'};
-  if (score >= t.play)  return {label:'SPIELBAR', tag:'good'};
-  if (score >= t.meh)   return {label:'GRENZBEREICH', tag:'warn'};
-  return {label:'EHER FOLD', tag:'bad'};
-}
-
-/* =========================
-   UI + App State
-========================= */
-const deckLeftEl = document.getElementById('deckLeft');
-const errEl = document.getElementById('err');
-
-const heroSlotsEl = document.getElementById('heroSlots');
-const boardSlotsEl = document.getElementById('boardSlots');
-const boardAreaEl = document.getElementById('boardArea');
-
-const targetHint = document.getElementById('targetHint');
-const targetChipValEl = document.getElementById('targetChipVal');
-
-const rankEl = document.getElementById('rank');
-const suitEl = document.getElementById('suit');
-const previewCardEl = document.getElementById('previewCard');
-const previewEl = document.getElementById('preview');
-
-const undoBtn = document.getElementById('undoBtn');
-const resetBtn = document.getElementById('resetBtn');
-const calcBtn = document.getElementById('calcBtn');
-const cancelBtn = document.getElementById('cancelBtn');
-const commitBtn = document.getElementById('commit');
-const clearSlotBtn = document.getElementById('clearSlotBtn');
-
-const statusText = document.getElementById('statusText');
-const barFill = document.getElementById('barFill');
-
-const resultEl = document.getElementById('result');
-const equityEl = document.getElementById('equity');
-const equityMetaEl = document.getElementById('equityMeta');
-const handNowEl = document.getElementById('handNow');
-const wtlEl = document.getElementById('wtl');
-const ciEl = document.getElementById('ci');
-const adviceEl = document.getElementById('advice');
-const adviceDetailEl = document.getElementById('adviceDetail');
-const detailsEl = document.getElementById('details');
-const details2El = document.getElementById('details2');
-const modeHintEl = document.getElementById('modeHint');
-
-const decisionScoreEl = document.getElementById('decisionScore');
-const decisionLabelEl = document.getElementById('decisionLabel');
-const decisionWhyEl   = document.getElementById('decisionWhy');
-
-const oppEl = document.getElementById('opp');
-const oppValEl = document.getElementById('oppVal');
-const itersEl = document.getElementById('iters');
-const itersValEl = document.getElementById('itersVal');
-const calcModeEl = document.getElementById('calcMode');
-const potEl = document.getElementById('pot');
-const callEl = document.getElementById('call');
-
-const ctaHintEl = document.getElementById('ctaHint');
-const resultsPanel = document.getElementById('resultsPanel');
-
-let stage = 'pre'; // pre | flop | turn | river
-let hero = [null, null];
-let board = [null, null, null, null, null];
-let selected = {type:'hero', index:0};
-const history = [];
-
-// cancellation token
-let activeRunId = 0;
-let cancelRequested = false;
-
-function fmtPct(x,d=2){ return (x*100).toFixed(d) + ' %'; }
-function setStatus(text,p){
-  statusText.textContent = text;
-  barFill.style.width = (p*100).toFixed(1)+'%';
-}
-function showErr(msg){
-  errEl.style.display = 'block';
-  errEl.textContent = msg;
-  if (navigator.vibrate) navigator.vibrate(25);
-}
-function clearErr(){
-  errEl.style.display = 'none';
-  errEl.textContent = '';
-}
-function boardMax(){
-  if (stage==='pre') return 0;
-  if (stage==='flop') return 3;
-  if (stage==='turn') return 4;
-  return 5;
-}
-function boardVisibleArray(){ return board.slice(0, boardMax()); }
-function usedSet(){
-  const s = new Set();
-  for (const x of hero) if (x!==null) s.add(x);
-  for (const x of boardVisibleArray()) if (x!==null) s.add(x);
-  return s;
-}
-function deckLeft(){ return 52 - usedSet().size; }
-
-function slotTitle(t,i){
-  if (t==='hero') return (i===0 ? 'Hole 1' : 'Hole 2');
-  return 'Board ' + (i+1);
-}
-function nextEmptySlot(){
-  for (let i=0;i<2;i++) if (hero[i]===null) return {type:'hero', index:i};
-  const max = boardMax();
-  for (let i=0;i<max;i++) if (board[i]===null) return {type:'board', index:i};
-  return null;
-}
-function setSelected(t,i, pulse=true){
-  selected = {type:t, index:i};
-  const title = slotTitle(t,i);
-  targetHint.textContent = `Ziel: ${title}`;
-  targetChipValEl.textContent = title;
-  renderSlots(pulse);
-  saveStateDebounced();
-}
-function renderSlots(pulseSelected=false){
-  heroSlotsEl.innerHTML = '';
-  for (let i=0;i<2;i++){
-    const el = document.createElement('div');
-    const isSel = (selected.type==='hero' && selected.index===i);
-    el.className = 'slot' + (isSel ? ' sel' : '') + (isSel && pulseSelected ? ' pulse' : '');
-    el.dataset.type='hero'; el.dataset.index=String(i);
-    el.innerHTML = (hero[i]===null) ? emptyHTML() : cardHTML(hero[i]);
-    el.addEventListener('click', ()=>setSelected('hero', i, true));
-    heroSlotsEl.appendChild(el);
-  }
-
-  const max = boardMax();
-  boardSlotsEl.innerHTML = '';
-  for (let i=0;i<max;i++){
-    const el = document.createElement('div');
-    const isSel = (selected.type==='board' && selected.index===i);
-    el.className = 'slot' + (isSel ? ' sel' : '') + (isSel && pulseSelected ? ' pulse' : '');
-    el.dataset.type='board'; el.dataset.index=String(i);
-    el.innerHTML = (board[i]===null) ? emptyHTML() : cardHTML(board[i]);
-    el.addEventListener('click', ()=>setSelected('board', i, true));
-    boardSlotsEl.appendChild(el);
-  }
-
-  boardAreaEl.style.display = (max>0) ? '' : 'none';
-  deckLeftEl.textContent = String(deckLeft());
-
-  const opp = Number(oppEl.value);
-  const knownBoard = getBoardKnown();
-  const exactEligible = (opp===1 && knownBoard.length>=3);
-  modeHintEl.textContent = exactEligible
-    ? 'Exakt möglich (Heads-Up ab Flop) – sonst Monte-Carlo'
-    : 'Monte-Carlo (Exakt nur Heads-Up ab Flop)';
-
-  updateCalcEnabled();
-}
-function getHero(){
-  if (hero[0]===null || hero[1]===null) return null;
-  return [hero[0], hero[1]];
-}
-function getBoardKnown(){
-  const max = boardMax();
-  const arr = [];
-  for (let i=0;i<max;i++){
-    if (board[i]!==null) arr.push(board[i]);
-  }
-  return arr.slice(0,5);
-}
-
-function validateForCalcLite(){
-  const h = getHero();
-  if (!h) return {ok:false, msg:'Setze beide Hole Cards.'};
-  const max = boardMax();
-  if (max>0){
-    for (let i=0;i<max;i++){
-      if (board[i]===null) return {ok:false, msg:`Setze Board ${i+1} (${stage.toUpperCase()}).`};
-    }
-  }
-  return {ok:true, msg:'Bereit zum Berechnen.'};
-}
-function updateCalcEnabled(){
-  const v = validateForCalcLite();
-  calcBtn.disabled = !v.ok || isBusy();
-  ctaHintEl.textContent = v.msg;
-}
-
-function isBusy(){
-  return cancelBtn.style.display !== 'none';
-}
-
-/* ===== Range progress helper (NOT for suit slider) ===== */
-function setRangeProgress(el){
-  const min = Number(el.min || 0);
-  const max = Number(el.max || 100);
-  const val = Number(el.value || 0);
-  const p = (max === min) ? 0 : ((val - min) / (max - min)) * 100;
-  el.style.setProperty('--p', String(Math.max(0, Math.min(100, p))));
-}
-function wireRange(el){
-  setRangeProgress(el);
-  el.addEventListener('input', ()=>{
-    setRangeProgress(el);
-    saveStateDebounced();
-  });
-}
-
-/* ===== Suit track palette ===== */
-function setSuitTrack(){
-  const s = Number(suitEl.value);
-  const map = [
-    { a:'rgba(160,190,255,.92)', b:'rgba(92,142,255,.78)', glow:'rgba(160,190,255,.24)' }, // ♠
-    { a:'rgba(255,92,126,.92)',  b:'rgba(255,70,102,.80)', glow:'rgba(255,92,126,.24)' }, // ♥
-    { a:'rgba(255,200,88,.92)',  b:'rgba(255,145,58,.78)', glow:'rgba(255,200,88,.24)' }, // ♦
-    { a:'rgba(82,240,182,.88)',  b:'rgba(34,198,148,.78)', glow:'rgba(82,240,182,.24)' }, // ♣
-  ];
-  const c = map[s] || map[0];
-
-  suitEl.style.setProperty('--suitA', c.a);
-  suitEl.style.setProperty('--suitB', c.b);
-  suitEl.style.setProperty('--suitGlow', c.glow);
-
-  suitEl.animate(
-    [{ filter:'brightness(1)' }, { filter:'brightness(1.06)' }, { filter:'brightness(1)' }],
-    { duration: 260, easing:'cubic-bezier(.2,.9,.2,1)' }
-  );
-}
-
-/* ===== Stage switching (centralized) ===== */
-function applyStage(newStage, {fromInit=false} = {}){
-  stage = newStage;
-
-  document.querySelectorAll('.stageBtn').forEach(b=>{
-    b.classList.toggle('active', b.dataset.stage === stage);
-  });
-
-  const max = boardMax();
-  for (let i=max;i<5;i++) board[i]=null;
-
-  for (let i=history.length-1;i>=0;i--){
-    const h = history[i];
-    if (h.type==='board' && (stage==='pre' || h.index>=max)) history.splice(i,1);
-  }
-  undoBtn.disabled = (history.length===0);
-
-  const n = nextEmptySlot() || {type:'hero', index:1};
-  setSelected(n.type, n.index, true);
-
-  clearErr();
-  resultEl.style.display = 'none';
-  renderSlots(true);
-  updateCalcEnabled();
-
-  if (!fromInit) saveStateDebounced();
-}
-document.querySelectorAll('.stageBtn').forEach(b=>{
-  b.addEventListener('click', ()=>applyStage(b.dataset.stage));
-});
-
-/* Opponents slider + chips */
-oppEl.addEventListener('input', ()=>{
-  oppValEl.textContent = oppEl.value;
-  syncOppChips(Number(oppEl.value));
-  renderSlots(false);
-  saveStateDebounced();
-});
-function syncOppChips(val){
-  document.querySelectorAll('.chip[data-opp]').forEach(ch=>{
-    ch.classList.toggle('active', Number(ch.dataset.opp) === val);
-  });
-}
-document.querySelectorAll('.chip[data-opp]').forEach(ch=>{
-  ch.addEventListener('click', ()=>{
-    const v = Number(ch.dataset.opp);
-    oppEl.value = String(v);
-    oppValEl.textContent = String(v);
-    syncOppChips(v);
-    setRangeProgress(oppEl);
-    renderSlots(true);
-    saveStateDebounced();
-  });
-});
-
-/* Preview */
-function updatePreview(){
-  const r = Number(rankEl.value);
-  const s = Number(suitEl.value);
-  previewCardEl.innerHTML = cardHTML(CODE_TO_ID[RANKS[r] + SUITS[s].c]);
-
-  setSuitTrack();
-
-  previewEl.classList.add('bump');
-  clearTimeout(updatePreview._t);
-  updatePreview._t = setTimeout(()=>previewEl.classList.remove('bump'), 120);
-
-  saveStateDebounced();
-}
-rankEl.addEventListener('input', updatePreview);
-suitEl.addEventListener('input', updatePreview);
-
-/* Animation */
-async function animateToSlot(cardId, slotEl){
-  const start = previewEl.getBoundingClientRect();
-  const end = slotEl.getBoundingClientRect();
-
-  const float = document.createElement('div');
-  float.className = 'floatCard';
-  float.style.left = start.left + 'px';
-  float.style.top = start.top + 'px';
-  float.style.width = start.width + 'px';
-  float.style.height = start.height + 'px';
-  float.innerHTML = `<div style="transform:scale(.9); display:flex; align-items:center; justify-content:center; width:100%; height:100%;">${cardHTML(cardId)}</div>`;
-  document.body.appendChild(float);
-
-  const dx = (end.left + end.width/2) - (start.left + start.width/2);
-  const dy = (end.top + end.height/2) - (start.top + start.height/2);
-  const scale = Math.min(1.0, end.width / start.width);
-
-  await float.animate([
-    { transform: 'translate(0px,0px) scale(1)', opacity: 1, filter:'blur(0px)' },
-    { transform: `translate(${dx}px,${dy}px) scale(${scale})`, opacity: 0.15, filter:'blur(0.6px)' }
-  ], { duration: 430, easing: 'cubic-bezier(.2,.9,.2,1)' }).finished;
-
-  float.remove();
-
-  slotEl.animate(
-    [{transform:'scale(1)'},{transform:'scale(1.05)'},{transform:'scale(1)'}],
-    {duration: 240, easing:'cubic-bezier(.2,.9,.2,1)'}
-  );
-}
-function getCardIdFromPicker(){
-  const r = Number(rankEl.value);
-  const s = Number(suitEl.value);
-  return CODE_TO_ID[RANKS[r] + SUITS[s].c];
-}
-function slotValue(t,i){
-  return (t==='hero') ? hero[i] : board[i];
-}
-function setSlotValue(t,i,val){
-  if (t==='hero') hero[i]=val;
-  else board[i]=val;
-}
-
-/* Commit card */
-async function commitSelectedCard(){
-  clearErr();
-
-  let target = selected;
-  if (stage==='pre' && target.type==='board'){
-    target = nextEmptySlot() || {type:'hero', index:1};
-    setSelected(target.type, target.index, true);
-  }
-  if (target.type==='board' && target.index >= boardMax()){
-    const n = nextEmptySlot();
-    if (!n){
-      showErr('Alle Slots belegt. Slot antippen zum Ersetzen oder Reset.');
-      return;
-    }
-    target = n; setSelected(n.type, n.index, true);
-  }
-
-  const id = getCardIdFromPicker();
-  const used = usedSet();
-  const prev = slotValue(target.type, target.index);
-  if (prev!==null) used.delete(prev);
-
-  if (used.has(id)){
-    showErr('Diese Karte ist bereits vergeben. Bitte wähle eine andere.');
-    return;
-  }
-
-  const slotEl = Array.from(document.querySelectorAll('.slot')).find(el =>
-    el.dataset.type===target.type && Number(el.dataset.index)===target.index
-  );
-
-  await animateToSlot(id, slotEl);
-
-  setSlotValue(target.type, target.index, id);
-
-  history.push({type:target.type, index:target.index, prev, next:id});
-  undoBtn.disabled = (history.length===0);
-
-  const n = nextEmptySlot();
-  if (n) setSelected(n.type, n.index, true);
-  else renderSlots(false);
-
-  resultEl.style.display = 'none';
-  updateCalcEnabled();
-  saveStateDebounced();
-}
-
-commitBtn.addEventListener('click', commitSelectedCard);
-previewEl.addEventListener('click', commitSelectedCard);
-
-clearSlotBtn.addEventListener('click', ()=>{
-  clearErr();
-  const prev = slotValue(selected.type, selected.index);
-  if (prev === null){
-    showErr('Slot ist bereits leer.');
-    return;
-  }
-  // clear must not violate duplicates (it can’t)
-  setSlotValue(selected.type, selected.index, null);
-  history.push({type:selected.type, index:selected.index, prev, next:null});
-  undoBtn.disabled = (history.length===0);
-  renderSlots(true);
-  resultEl.style.display = 'none';
-  updateCalcEnabled();
-  saveStateDebounced();
-});
-
-/* Undo / Reset */
-undoBtn.addEventListener('click', ()=>{
-  clearErr();
-  const h = history.pop();
-  if (!h) return;
-  setSlotValue(h.type, h.index, h.prev);
-  undoBtn.disabled = (history.length===0);
-  setSelected(h.type, h.index, true);
-  renderSlots(true);
-  resultEl.style.display = 'none';
-  updateCalcEnabled();
-  saveStateDebounced();
-});
-resetBtn.addEventListener('click', ()=>{
-  clearErr();
-  hero = [null,null];
-  board = [null,null,null,null,null];
-  history.length = 0;
-  undoBtn.disabled = true;
-  resultEl.style.display = 'none';
-  setStatus('Bereit.', 0);
-  setSelected('hero', 0, true);
-  renderSlots(true);
-  updateCalcEnabled();
-  saveStateDebounced();
-});
-
-/* Advanced */
-itersEl.addEventListener('input', ()=>{ itersValEl.textContent = itersEl.value; });
-calcModeEl.addEventListener('change', saveStateDebounced);
-potEl.addEventListener('input', saveStateDebounced);
-callEl.addEventListener('input', saveStateDebounced);
-
-/* Cancel handling */
-function beginRun(){
-  cancelRequested = false;
-  cancelBtn.style.display = '';
-  cancelBtn.disabled = false;
-  return ++activeRunId; // EINZIGE Stelle, die activeRunId erhöht
-}
-function endRun(){
-  cancelBtn.style.display = 'none';
-  cancelBtn.disabled = true;
-  cancelRequested = false;
-}
-function shouldCancel(runId){
-  return cancelRequested || runId !== activeRunId;
-}
-cancelBtn.addEventListener('click', ()=>{
-  cancelRequested = true;
-  cancelBtn.disabled = true;
-  setStatus('Abbrechen…', barFill.style.width ? parseFloat(barFill.style.width)/100 : 0);
-});
-
-/* Calc */
-function validateForCalc(){
-  const v = validateForCalcLite();
-  if (!v.ok){
-    showErr(v.msg);
-    return false;
-  }
-  // additional sanity for pot/call
-  const pot = (potEl.value==='') ? NaN : Number(potEl.value);
-  const call = (callEl.value==='') ? NaN : Number(callEl.value);
-  if (Number.isFinite(pot) && pot < 0) { showErr('Pot darf nicht negativ sein.'); return false; }
-  if (Number.isFinite(call) && call < 0) { showErr('Call darf nicht negativ sein.'); return false; }
-  return true;
-}
-
-calcBtn.addEventListener('click', async ()=>{
-  clearErr();
-  if (!validateForCalc()) return;
-
-  const runId = beginRun();
-
-  const opponents = Number(oppEl.value);
-  const maxIters = Number(itersEl.value);
-  const selectedMode = calcModeEl.value;
-
-  const h = getHero();
-  const boardKnown = getBoardKnown();
-
-  const exactEligible = (opponents===1 && boardKnown.length>=3);
-  let mode = 'mc';
-  if (selectedMode==='exact') mode='exact';
-  else if (selectedMode==='mc') mode='mc';
-  else mode = exactEligible ? 'exact' : 'mc';
-
-  if (mode==='exact' && !exactEligible){
-    showErr('Exakt ist nur möglich bei Heads-Up (1 Gegner) und mindestens Flop (3 Boardkarten).');
-    endRun();
-    updateCalcEnabled();
-    return;
-  }
-
-  calcBtn.disabled = true;
-  resetBtn.disabled = true;
-  undoBtn.disabled = true;
-  commitBtn.disabled = true;
-  clearSlotBtn.disabled = true;
-
-  setStatus('Rechnet…', 0.06);
-  resultEl.style.display = 'none';
-
-  try{
-    let equity, winProb, tieProb, loseProb, ciText, details2;
-    let mcHalf95 = NaN;
-
-    if (mode === 'exact'){
-      setStatus('Exakt (Heads-Up)…', 0.10);
-      const res = await exactHeadsUpFromFlop(
-        h, boardKnown,
-        (p)=>setStatus('Exakt (Heads-Up)…', p),
-        ()=>shouldCancel(runId)
-      );
-      equity = res.equity;
-      winProb = res.winProb; tieProb = res.tieProb; loseProb = res.loseProb;
-      ciText = `Exakt berechnet (States: ${res.states.toLocaleString('de-DE')}).`;
-      details2 = `${stage.toUpperCase()} · Gegnerhände: zufällig · exakt`;
-      setStatus('Fertig (exakt).', 1);
-    } else {
-      // Preflop etwas höhere Varianz -> geringfügig großzügigerer CI-Target
-      const targetHalf = (stage === 'pre') ? 0.012 : 0.010; // 1.2% / 1.0% @95%
-      const minIters = (stage === 'pre') ? 30000 : 20000;
-
-      setStatus('Monte-Carlo…', 0.10);
-      const res = await monteCarloEquityAdaptive(
-        h, boardKnown, opponents,
-        { minIters: Math.min(minIters, maxIters), maxIters, targetHalfWidth95: targetHalf },
-        (p)=>setStatus('Monte-Carlo…', p),
-        ()=>shouldCancel(runId)
-      );
-
-      equity = res.equity;
-      winProb = res.winProb; tieProb = res.tieProb; loseProb = res.loseProb;
-      mcHalf95 = res.half95;
-
-      const half = res.half95 ?? (1.96*res.se);
-      ciText = `≈ 95% CI: ${fmtPct(Math.max(0, equity-half),2)} bis ${fmtPct(Math.min(1, equity+half),2)} · Iter: ${res.iters.toLocaleString('de-DE')}`;
-      details2 = `${stage.toUpperCase()} · Gegnerhände: zufällig · MC (adaptiv)`;
-      setStatus('Fertig (MC).', 1);
-    }
-
-    if (shouldCancel(runId)) throw new Error('CANCELLED');
-
-    // Equity score (Anzeige)
-    const eqScore = Math.max(1, Math.min(100, Math.round(equity*100)));
-    equityEl.textContent = fmtPct(equity,2);
-    equityMetaEl.textContent = `Score: ${eqScore} / 100`;
-
-    // Hand name
-    const nowHand = currentHandName(h, boardKnown);
-    handNowEl.textContent = `Aktuelle Kombination: ${nowHand}`;
-
-    wtlEl.textContent = `W/T/L: ${fmtPct(winProb,1)} / ${fmtPct(tieProb,1)} / ${fmtPct(loseProb,1)}`;
-    ciEl.textContent = ciText;
-
-    // Decision score
-    const pot = (potEl.value==='') ? NaN : Number(potEl.value);
-    const call = (callEl.value==='') ? NaN : Number(callEl.value);
-
-    let decScore, why;
-    if (stage === 'pre'){
-      const out = preflopDecisionScore(h, opponents);
-      decScore = out.score;
-      why = `Preflop (Chen: ${out.chen}/20) · angepasst für ${opponents} Gegner`;
-    } else {
-      const out = decisionScoreFromEquity({ equity, opponents, pot, call, half95: (mode==='mc' ? mcHalf95 : NaN) });
-      decScore = out.score;
-      why = out.basisText;
-    }
-
-    const act = actionFromScore(decScore, stage);
-
-    decisionScoreEl.textContent = `${Math.round(decScore)}/100`;
-    decisionLabelEl.innerHTML = `<span class="tag ${act.tag}">${act.label}</span>`;
-    decisionWhyEl.textContent = why;
-
-    // Empfehlung konsistent
-    adviceEl.innerHTML = `${act.label} <span class="tag ${act.tag}">${act.tag.toUpperCase()}</span>`;
-
-    if (stage === 'pre'){
-      adviceDetailEl.textContent =
-        decScore >= 54
-          ? 'Preflop solide – tendenziell spielen (Position/Action beachten).'
-          : (decScore >= 46
-              ? 'Grenzbereich – eher nur in günstigen Spots.'
-              : 'Eher fold – außer spezielle Reads/Situation.');
-    } else {
-      const hasOdds = Number.isFinite(pot) && Number.isFinite(call) && call>0 && (pot+call)>0;
-      adviceDetailEl.textContent = hasOdds
-        ? 'Postflop: Pot Odds/Edge + Equity (multiway konservativ).'
-        : 'Postflop: Equity-Vorteil vs. Multiway-Baseline.';
-    }
-
-    const modeTxt = (mode==='exact') ? 'Exakt' : `Monte-Carlo (Max ${maxIters.toLocaleString('de-DE')})`;
-    detailsEl.textContent = `${modeTxt} · Gegner: ${opponents}`;
-    details2El.textContent = details2;
-
-    resultEl.style.display = 'grid';
-    resultsPanel.scrollIntoView({behavior:'smooth', block:'start'});
-  } catch(e){
-    if (e && e.message === 'CANCELLED'){
-      // clean cancel
-      showErr('Berechnung abgebrochen.');
-      setStatus('Abgebrochen.', 0);
-    } else {
-      showErr('Fehler bei der Berechnung: ' + (e && e.message ? e.message : String(e)));
-    }
-  } finally {
-    endRun();
-    calcBtn.disabled = !validateForCalcLite().ok;
-    resetBtn.disabled = false;
-    undoBtn.disabled = (history.length===0);
-    commitBtn.disabled = false;
-    clearSlotBtn.disabled = false;
-    updateCalcEnabled();
-  }
-});
-
-/* =========================
-   Modal open/close logic
-========================= */
-const handsBtn = document.getElementById('handsBtn');
-const handsModal = document.getElementById('handsModal');
-const handsClose = document.getElementById('handsClose');
-let lastFocusEl = null;
-
-function openHands(){
-  lastFocusEl = document.activeElement;
-  handsModal.style.display = 'flex';
-  requestAnimationFrame(()=>handsModal.classList.add('show'));
-  const modalBox = handsModal.querySelector('.modal');
-  modalBox.focus();
-  document.body.style.overflow = 'hidden';
-}
-function closeHands(){
-  handsModal.classList.remove('show');
-  setTimeout(()=>{
-    handsModal.style.display = 'none';
-    document.body.style.overflow = '';
-    if (lastFocusEl && typeof lastFocusEl.focus === 'function') lastFocusEl.focus();
-  }, 180);
-}
-handsBtn.addEventListener('click', openHands);
-handsClose.addEventListener('click', closeHands);
-handsModal.addEventListener('click', (e)=>{ if (e.target === handsModal) closeHands(); });
-document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape' && handsModal.style.display === 'flex') closeHands(); });
-
-/* =========================
-   Init
-========================= */
-function init(){
-  // wire range progress fills (exclude suit)
-  [oppEl, rankEl, itersEl].forEach(wireRange);
-
-  // load persisted settings
-  const st = loadState();
-  if (st){
-    if (st.opp) { oppEl.value = String(clamp(Number(st.opp),1,8)); }
-    if (st.iters) { itersEl.value = String(clamp(Number(st.iters),10000,250000)); }
-    if (typeof st.calcMode === 'string') calcModeEl.value = st.calcMode;
-    if (typeof st.pot === 'string') potEl.value = st.pot;
-    if (typeof st.call === 'string') callEl.value = st.call;
-    if (Number.isFinite(st.rank)) rankEl.value = String(clamp(Number(st.rank),0,12));
-    if (Number.isFinite(st.suit)) suitEl.value = String(clamp(Number(st.suit),0,3));
-    if (typeof st.stage === 'string' && ['pre','flop','turn','river'].includes(st.stage)) stage = st.stage;
-  }
-
-  oppValEl.textContent = oppEl.value;
-  itersValEl.textContent = itersEl.value;
-  undoBtn.disabled = true;
-
-  setSuitTrack();
-  updatePreview();
-
-  syncOppChips(Number(oppEl.value));
-  applyStage(stage, {fromInit:true});
-  setStatus('Bereit.', 0);
-  renderSlots(true);
-  updateCalcEnabled();
-
-  // ensure target chip sync
-  setSelected('hero', 0, true);
-  saveStateDebounced();
-}
-init();
-</script>
+  <script src="./app.js"></script>
 </body>
 </html>
