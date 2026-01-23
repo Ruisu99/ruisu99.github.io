@@ -84,7 +84,7 @@ header{
 }
 
 @media (max-width: 900px){
-  :root{ --wheelH: 270px; --wheelItemH: 56px; }
+  :root{ --wheelH: 210px; --wheelItemH: 48px; --gap: 10px; }
 }
 
 /* Panel base */
@@ -153,24 +153,74 @@ header{
 
 /* Mobile: make the two inner parts feel like one continuous block */
 @media (max-width: 900px){
-  #panelCards .bd{ padding:0; }
-  #panelCards .cardsGrid{ gap:0; }
-  #panelCards .subCard{
-    border-left:0; border-right:0;
-    border-radius:0;
-  }
+  /* weniger vertikales "Chrome" */
+  #panelCards .cardsGrid{ grid-template-columns: 1fr; gap: 10px; }
+  #panelCards .subHd{ display:none; }
+  #panelCards .subBd{ padding: 12px; }
+  #panelCards .stack{ gap: 10px; }
+
+  /* Anzeige bleibt sichtbar während man im Wheel scrollt */
   #panelCards .subCard:first-child{
-    border-top-left-radius: var(--radius);
-    border-top-right-radius: var(--radius);
+    position: sticky;
+    top: 10px;
+    z-index: 40;
+    background: rgba(15,27,46,.92);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 18px 50px rgba(0,0,0,.28);
   }
-  #panelCards .subCard:last-child{
-    border-bottom-left-radius: var(--radius);
-    border-bottom-right-radius: var(--radius);
+
+  /* Board passt ohne Umbruch: horizontal scroll */
+  #panelCards .slots{
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
   }
-  #panelCards .subCard + .subCard{
-    border-top:1px solid rgba(255,255,255,.10);
+  #panelCards .slots::-webkit-scrollbar{ display:none; }
+
+  /* kleinere Slots/Karten (mehr gleichzeitig sichtbar) */
+  #panelCards .slot{ width:64px; height:82px; border-radius: 14px; }
+  #panelCards .cardFace{ width:56px; height:74px; border-radius: 12px; font-size:18px; }
+  #panelCards .mini, #panelCards .mini2{ font-size:10px; }
+
+  /* kompaktere Preview */
+  #panelCards .preview{ width:96px; height:124px; border-radius: 18px; }
+  #panelCards .preview .cardFace{ width:78px; height:102px; border-radius: 16px; font-size:26px; }
+}
+
+/* Gegner/Setup: auf Desktop "immer sichtbar", auf Mobile einklappbar */
+.setupMore{
+  border:1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255,255,255,.03);
+  overflow:hidden;
+}
+.setupMore > summary{
+  cursor:pointer;
+  list-style:none;
+  padding:12px 12px;
+  font-weight:950;
+  color: var(--text);
+  font-size:13px;
+}
+.setupMore > summary::-webkit-details-marker{ display:none; }
+.setupMoreBd{
+  padding:0 12px 12px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+@media (min-width: 901px){
+  .setupMore{
+    border:0;
+    background: transparent;
+  }
+  .setupMore > summary{ display:none; }
+  .setupMoreBd{
+    padding:0;
+    border-top:0;
   }
 }
+
 
 /* Stage seg */
 .seg{
