@@ -53,11 +53,15 @@
                     <button class="stageBtn" data-stage="river" type="button">River</button>
                   </div>
 
-                  <div>
-                    <label for="opp" style="margin-top:0;">Gegner (Anzahl)</label>
-                    <input id="opp" class="range" type="range" min="1" max="8" step="1" value="3" />
-                    <div class="muted" style="margin-top:6px;">Aktuell: <b id="oppVal">3</b></div>
-                  </div>
+                 <details class="setupMore" id="setupMore">
+  <summary>Setup</summary>
+  <div class="setupMoreBd">
+    <label for="opp" style="margin-top:0;">Gegner (Anzahl)</label>
+    <input id="opp" class="range" type="range" min="1" max="8" step="1" value="3" />
+    <div class="muted" style="margin-top:6px;">Aktuell: <b id="oppVal">3</b></div>
+  </div>
+</details>
+
 
                   <div>
                     <div class="sectionLabel">Deine Karten</div>
